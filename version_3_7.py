@@ -2,6 +2,7 @@ import urllib
 import csv
 from string import rstrip
 import os
+from sys import platform as SYS_PLATFORM
 import csv
 import shutil
 import easygui
@@ -10,6 +11,12 @@ import Tkinter as tk
 import thread
 import time
 import tkFileDialog
+
+# Check line 289 to see why this is necessary. If this doesn't work on Windows now, please fix it.
+if "windows" in SYS_PLATFORM.lower():
+    file_delimeter = "\\"
+else:
+    file_delimeter = "/"
 
 def GlobalVars():
     global PBPercentage
@@ -37,7 +44,7 @@ def Engine():
     print "Engine thread created"
 
     
-    OrigFileName=FileLoc.split("\\")[-1]
+    OrigFileName=FileLoc.split(file_delimeter)[-1]
     OrigFileName=OrigFileName.split(".")[0]
     with open(FileLoc, 'rb') as f:
         BirdFile = list(csv.reader(f))
@@ -46,14 +53,14 @@ def Engine():
     FileDir = os.path.dirname(os.path.realpath(__file__))
     print "Program running from "+FileDir
     
-    if os.path.isdir(FileDir+"\\"+OrigFileName)!=True:
-        os.mkdir(FileDir+"\\"+OrigFileName)
+    if os.path.isdir(FileDir+file_delimeter+OrigFileName)!=True:
+        os.mkdir(FileDir+file_delimeter+OrigFileName)
         print ""
-        print "Created Directory "+FileDir+"\\"+OrigFileName+"."
+        print "Created Directory "+FileDir+file_delimeter+OrigFileName+"."
         print ""
     else:
         print ""
-        print "Directory "+FileDir+"\\"+OrigFileName+" already exists, and will be used for this session."
+        print "Directory "+FileDir+file_delimeter+OrigFileName+" already exists, and will be used for this session."
         print ""
 
     global Entries
@@ -63,7 +70,7 @@ def Engine():
     global Action
     Action = "Processing"
 
-    MoveToDir=FileDir+"\\"+OrigFileName
+    MoveToDir=FileDir+file_delimeter+OrigFileName
 
     #finding headers
     ColCheck = 0
@@ -147,7 +154,7 @@ def Engine():
                     try:
                         shutil.move(str(CatNum)+".jpg",MoveToDir)
                     except:
-                        os.remove(MoveToDir+"\\"+str(CatNum)+".jpg")
+                        os.remove(MoveToDir+file_delimeter+str(CatNum)+".jpg")
                         shutil.move(str(CatNum)+".jpg",MoveToDir)
                     print ""
                     print "done"
@@ -278,7 +285,14 @@ class GUI(tk.Frame):
         FileLoc = tkFileDialog.askopenfilename(filetypes=[("CSV Files","*.csv")])
         if FileLoc!="":
             global FileLoc
-            FileLoc = FileLoc.replace('/','\\')
+            """
+            If this runs on a Windows machine, this will automatically escape '\' to '\\'. On Linux/MacOSX, it will do nothing.
+            The way it was previously meant that ALL file delimeters were translated to '\\', which simply does not work on Linux
+            (and possibly OSX as well). This solution does require the application to keep track of the file delimeter used, which
+            is implemented through a variable called file_delimeter.
+            """
+            # FileLoc = FileLoc.replace("/","\\")
+            FileLoc = FileLoc.encode('string_escape')
         else:
             global FileLoc
             FileLoc = "No CSV File Selected"
