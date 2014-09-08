@@ -367,7 +367,8 @@ class GUI(tk.Frame):
             
 
     def Console(self):
-        print input()
+        print "Enter a command..."
+        exec raw_input(">>> ")
             
         
 
