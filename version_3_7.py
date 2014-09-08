@@ -12,7 +12,15 @@ import thread
 import time
 import tkFileDialog
 
-# Check line 289 to see why this is necessary. If this doesn't work on Windows now, please fix it.
+def escape(x):
+    res = ""
+    for i in x:
+        if i == "\\": # If it equals a single backslash.
+            res += "\\\\" # Add two backslashes
+        else:
+            res += i # Add whatever the character was
+    return res
+
 if "windows" in SYS_PLATFORM.lower():
     file_delimeter = "\\"
 else:
@@ -291,8 +299,8 @@ class GUI(tk.Frame):
             (and possibly OSX as well). This solution does require the application to keep track of the file delimeter used, which
             is implemented through a variable called file_delimeter.
             """
-            # FileLoc = FileLoc.replace("/","\\")
-            FileLoc = FileLoc.encode('string_escape')
+            # So hopefully doing this myself will stop the type issue. The function escape() can be found at line 15 
+            FileLoc = escape(FileLoc)
         else:
             global FileLoc
             FileLoc = "No CSV File Selected"
