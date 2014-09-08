@@ -14,6 +14,16 @@ import thread
 import time
 import tkFileDialog
 
+# Global vars
+PBPercentage = 0
+FileLoc="No CSV File Selected"
+CurrentOp="Idle"
+Entries = 0
+Entry = 0
+Action = ""
+Stop = 0
+End=0
+
 def escape(x):
     res = ""
     for i in x:
