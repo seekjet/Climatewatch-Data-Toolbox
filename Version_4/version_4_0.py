@@ -222,22 +222,12 @@ class GUI(tk.Frame):
         self.PrepareImages.grid(column=2,row=0,sticky=tk.NW)
 
         self.StopDLoad = ttk.Button(self, text="Pause Download", command=self.StopDL)
-        self.StopDLoad.grid(column=3,row=0,sticky=tk.NW,)
+        self.StopDLoad.grid(column=3,row=0,sticky=tk.NW)
         self.StopDLoad["state"]=tk.DISABLED
 
         self.ExitDload = ttk.Button(self, text="Stop Download", command=self.ExitDL)
-        self.ExitDload.grid(column=4,row=0,sticky=tk.NW,columnspan=100)
+        self.ExitDload.grid(column=4,row=0,sticky=tk.NW)
         self.ExitDload["state"]=tk.DISABLED
-
-        self.DataScroll = tk.Scrollbar(self)
-        self.DataScroll.grid(column=50, row=2, sticky=tk.NW+tk.S)
-
-        self.DataCanvas = tk.Canvas(self, yscrollcommand=self.DataScroll.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
-        self.DataCanvas.grid(column=0, row=2, sticky=tk.NW, columnspan=50)
-
-        self.DataScroll.config(command=self.DataCanvas.yview)
-
-        
 
         self.Console=ttk.Button(self,text="Console",command=self.Console)
         self.Console.grid(column=0,row=700,sticky=tk.NW)
@@ -251,7 +241,22 @@ class GUI(tk.Frame):
         self.tabs = ttk.Notebook(self)
         self.keepEntries = ttk.Frame(self.tabs)
         self.deleteEntries = ttk.Frame(self.tabs)
-        # We will .grid() these later
+        
+        self.tabs.add(self.keepEntries, text="Correct Entries")
+        self.tabs.add(self.deleteEntries, text="Entries staged for deletion")
+        self.tabs.grid(row=4, columnspan=10)
+        
+        self.DataScrollCorrect = tk.Scrollbar(self.keepEntries)
+        self.DataScrollCorrect.grid(column=50, row=5, sticky=tk.W)
+        self.DataCanvasCorrect = tk.Canvas(self.keepEntries, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
+        self.DataCanvasCorrect.grid(column=0, row=5, sticky=tk.W, columnspan=50)
+        self.DataScrollCorrect.config(command=self.DataCanvasCorrect.yview)
+
+        self.DataScrollWrong = tk.Scrollbar(self.deleteEntries)
+        self.DataScrollWrong.grid(column=50, row=5, sticky=tk.W)
+        self.DataCanvasWrong = tk.Canvas(self.deleteEntries, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
+        self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
+        self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5)
         canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
@@ -297,9 +302,7 @@ class GUI(tk.Frame):
             self.after(100, self.PBChange)
             
     def loadEntries(self):    
-        self.tabs.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
-        self.keepEntries.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
-        self.deleteEntries.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        # Load tabs here
         with open(FileLoc, 'rb') as f:
             BirdFile = list(csv.reader(f))
         for i in BirdFile:
@@ -387,6 +390,6 @@ class GUI(tk.Frame):
         
 
 tkin=tk.Tk()
-tkin.geometry('641x480')
+tkin.geometry('640x500')
 GUI = GUI(tkin)
 GUI.mainloop()
