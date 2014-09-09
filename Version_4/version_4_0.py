@@ -1,13 +1,10 @@
-#blah
+#!/usr/bin/env python2
 
 import urllib
 import csv
-from string import rstrip
 import os
 from sys import platform as SYS_PLATFORM
-import csv
 import shutil
-
 import ttk
 import Tkinter as tk
 import thread
