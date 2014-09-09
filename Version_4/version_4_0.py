@@ -56,7 +56,6 @@ def GlobalVars():
 
 
 def Engine():
-    
 
     print "Engine thread created"
 
@@ -248,6 +247,11 @@ class GUI(tk.Frame):
 
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
         self.CurrentOperation.grid(column=0,row=998,sticky=tk.NW,columnspan=200)
+        
+        self.tabs = ttk.Notebook(self)
+        self.keepEntries = ttk.Frame(self.tabs)
+        self.deleteEntries = ttk.Frame(self.tabs)
+        # We will .grid() these later
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5)
         canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
@@ -292,8 +296,15 @@ class GUI(tk.Frame):
         else:
             self.after(100, self.PBChange)
             
-        
-        
+    def loadEntries(self):    
+        self.tabs.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        self.keepEntries.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        self.deleteEntries.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        with open(FileLoc, 'rb') as f:
+            BirdFile = list(csv.reader(f))
+        for i in BirdFile:
+            for j in i:
+                print j
 
     def FindFile(self):
         global CurrentOp
@@ -301,15 +312,9 @@ class GUI(tk.Frame):
         global FileLoc
         FileLoc = tkFileDialog.askopenfilename(filetypes=[("CSV Files","*.csv")])
         if FileLoc!="":
-            global FileLoc
-            """
-            If this runs on a Windows machine, this will automatically escape '\' to '\\'. On Linux/MacOSX, it will do nothing.
-            The way it was previously meant that ALL file delimeters were translated to '\\', which simply does not work on Linux
-            (and possibly OSX as well). This solution does require the application to keep track of the file delimeter used, which
-            is implemented through a variable called file_delimeter.
-            """
-            # So hopefully doing this myself will stop the type issue. The function escape() can be found at line 15 
+            global FileLoc 
             FileLoc = escape(FileLoc)
+            self.loadEntries()
         else:
             global FileLoc
             FileLoc = "No CSV File Selected"
