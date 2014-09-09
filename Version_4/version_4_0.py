@@ -302,10 +302,7 @@ class GUI(tk.Frame):
         self.deleteEntries.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
         with open(FileLoc, 'rb') as f:
             BirdFile = list(csv.reader(f))
-        for i in BirdFile:
-            for j in i:
-                print j
-
+        
     def FindFile(self):
         global CurrentOp
         CurrentOp="Selecting CSV File..."
