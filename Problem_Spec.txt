@@ -1,0 +1,18 @@
+Input:
+CSV file
+headers on first row
+data sorted by columns
+GUI
+
+Output:
+Program to display information on each entry
+download images
+export CSV file once entries have been processed
+
+Extra Features:
+Sorting feature (filters, sort by... etc.)
+settings profiles
+
+Assumptions:
+CSV file will have consistent format (headers first row, data everything else)
+Want to export as CSV
