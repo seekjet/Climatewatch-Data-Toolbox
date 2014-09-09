@@ -305,9 +305,6 @@ class GUI(tk.Frame):
         # Load tabs here
         with open(FileLoc, 'rb') as f:
             BirdFile = list(csv.reader(f))
-        for i in BirdFile:
-            for j in i:
-                print j
 
     def FindFile(self):
         global CurrentOp
