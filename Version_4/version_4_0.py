@@ -207,56 +207,84 @@ class GUI(tk.Frame):
 
     def Init(self):
         value_progress =300
+        
+        self.menuFrame = ttk.Frame(self)
 
         self.parent.title("No-Name File Program")
         self.config(bg='#F0F0F0')
         self.pack(fill = tk.BOTH, expand = 1)
 
-        self.SelectCSV = ttk.Button(self, text="Select CSV File to Process",command=self.FindFile)
+        self.SelectCSV = ttk.Button(self.menuFrame, text="Select CSV File to Process",command=self.FindFile)
         self.SelectCSV.grid(column=0,row=0,sticky=tk.NW)
 
-        self.DeselectCSV = ttk.Button(self, text="Deselect CSV File",command=self.FileDeselect)
+        self.DeselectCSV = ttk.Button(self.menuFrame, text="Deselect CSV File",command=self.FileDeselect)
         self.DeselectCSV.grid(column=1,row=0,sticky=tk.NW)
 
-        self.PrepareImages = ttk.Button(self, text="Prepare Images", command=self.PreImages)
+        self.PrepareImages = ttk.Button(self.menuFrame, text="Prepare Images", command=self.PreImages)
         self.PrepareImages.grid(column=2,row=0,sticky=tk.NW)
 
-        self.StopDLoad = ttk.Button(self, text="Pause Download", command=self.StopDL)
+        self.StopDLoad = ttk.Button(self.menuFrame, text="Pause Download", command=self.StopDL)
         self.StopDLoad.grid(column=3,row=0,sticky=tk.NW)
         self.StopDLoad["state"]=tk.DISABLED
 
-        self.ExitDload = ttk.Button(self, text="Stop Download", command=self.ExitDL)
+        self.ExitDload = ttk.Button(self.menuFrame, text="Stop Download", command=self.ExitDL)
         self.ExitDload.grid(column=4,row=0,sticky=tk.NW)
         self.ExitDload["state"]=tk.DISABLED
+        
+        self.menuFrame.grid(row=0, column=0, sticky=tk.NW)
 
         self.Console=ttk.Button(self,text="Console",command=self.Console)
-        self.Console.grid(column=0,row=700,sticky=tk.NW)
+        #self.Console.grid(column=0,row=700,sticky=tk.NW)
+        self.Console.grid(row=3, column=0, sticky=tk.NW)
 
         self.SelectedCSV = ttk.Label(self, text=FileLoc)
-        self.SelectedCSV.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        #self.SelectedCSV.grid(column=0,row=1,sticky=tk.NW,columnspan=200)
+        self.SelectedCSV.grid(row=1, column=0, sticky=tk.NW)
 
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
-        self.CurrentOperation.grid(column=0,row=998,sticky=tk.NW,columnspan=200)
+        #self.CurrentOperation.grid(column=0,row=998,sticky=tk.NW,columnspan=200)
+        self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
         
+        """
         self.tabs = ttk.Notebook(self)
         self.keepEntries = ttk.Frame(self.tabs)
         self.deleteEntries = ttk.Frame(self.tabs)
+        """
         
+        self.correctFrame = ttk.Frame(self)
+        self.incorrectFrame = ttk.Frame(self)
+        self.allFrame = ttk.Frame(self)
+        """
         self.tabs.add(self.keepEntries, text="Correct Entries")
         self.tabs.add(self.deleteEntries, text="Entries staged for deletion")
         self.tabs.grid(row=4, columnspan=10)
+        """
         
-        self.DataScrollCorrect = tk.Scrollbar(self.keepEntries)
+        self.DataScrollCorrect = tk.Scrollbar(self.correctFrame)
         self.DataScrollCorrect.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasCorrect = tk.Canvas(self.keepEntries, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
+        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
         self.DataCanvasCorrect.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollCorrect.config(command=self.DataCanvasCorrect.yview)
 
-        self.DataScrollWrong = tk.Scrollbar(self.deleteEntries)
+        self.DataScrollWrong = tk.Scrollbar(self.incorrectFrame)
         self.DataScrollWrong.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasWrong = tk.Canvas(self.deleteEntries, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
+        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=380)
         self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
+        
+        self.DataScrollAll = tk.Scrollbar(self.allFrame)
+        self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
+        self.DataCanvasAll = tk.Canvas(self.allFrame, yscrollcommand=self.DataScrollAll.set, relief=tk.FLAT, background = "#D2D2D2", width=520, height=380)
+        self.sideFrame = tk.Frame(self.allFrame)
+        self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=100, background="#D2D2D2")
+        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=275, width=100, background="#D2D2D2")
+        self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=380, padx=1, pady=1)
+        self.DataScrollAll.config(command=self.DataCanvasAll.yview)
+        self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=1, pady=1)
+        self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=1, pady=1)
+        self.sideFrame.grid(column=0, row=0, sticky=tk.NW)
+        
+        self.allFrame.grid(row=2, column=0)
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5)
         canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
@@ -379,6 +407,21 @@ class GUI(tk.Frame):
             self.DeselectCSV["state"]=tk.ACTIVE
             CurrentOp="Idle"
             
+    def showAllEntries(self):
+        self.correctFrame.grid_forget()
+        self.incorrectFrame.grid_forget()
+        self.allFrame.grid(row=2, column=0)
+        
+    def showCorrectEntries(self):
+        self.allFrame.grid_forget()
+        self.incorrectFrame.grid_forget()
+        self.correctFrame.grid(row=2, column=0)
+        
+    def showInorrectEntries(self):
+        self.allFrame.grid_forget()
+        self.correctFrame.grid_forget()
+        self.incorrectFrame.grid(row=2, column=0)
+            
 
     def Console(self):
         print "Enter a command..."
@@ -387,6 +430,6 @@ class GUI(tk.Frame):
         
 
 tkin=tk.Tk()
-tkin.geometry('640x500')
+tkin.geometry('640x480')
 GUI = GUI(tkin)
 GUI.mainloop()
