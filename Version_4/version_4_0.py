@@ -62,6 +62,7 @@ def Engine():
     
     OrigFileName=FileLoc.split(file_delimeter)[-1]
     OrigFileName=OrigFileName.split(".")[0]
+    print FileLoc
     with open(FileLoc, 'rb') as f:
         BirdFile = list(csv.reader(f))
     
