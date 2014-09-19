@@ -8,6 +8,7 @@ import Tkinter as tk
 import thread
 import time
 import tkFileDialog
+import tkMessageBox
 
 # Global vars
 PBPercentage = 0
@@ -51,8 +52,42 @@ def GlobalVars():
     global End
     End=0
 
-class GUI(tk.Frame):
-    
+class ConsoleUI(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        
+        self.parent.title("Console")
+        self.config(bg="#F0F0F0")
+        self.instruction = tk.Label(self.parent, text="Enter your command (python code):")
+        self.instruction.pack()
+        
+        self.filler1 = tk.Label(self.parent, text="")
+        self.filler1.pack()
+        
+        self.entryField = tk.Entry(self.parent)
+        self.entryField.pack()
+        
+        self.filler2 = tk.Label(self.parent, text="")
+        self.filler2.pack()
+        
+        self.buttonFrame = tk.Frame(self.parent)
+        self.buttonFrame.pack()
+        
+        self.okButton = tk.Button(self.buttonFrame, text="Execute", command=self.execute)
+        self.cancelButton = tk.Button(self.buttonFrame, text="Cancel", command=self.cancel)
+        self.okButton.pack(side=tk.LEFT)
+        self.cancelButton.pack(side=tk.LEFT)
+        
+    def execute(self):
+        exec self.entryField.get()
+        self.parent.destroy()
+        
+    def cancel(self):
+        self.parent.destroy()
+        
+
+class GUI(tk.Frame):    
     def __init__(self, parent):
         GlobalVars()
         print ""
@@ -92,10 +127,8 @@ class GUI(tk.Frame):
         menubar.add_cascade(label="Automation", menu=automationMenu)
         
         editMenu = tk.Menu(menubar)
+        editMenu.add_command(label="Console", command=self.Console)
         menubar.add_cascade(label="Edit", menu=editMenu)
-
-        self.Console=ttk.Button(self,text="Console",command=self.Console)
-        self.Console.grid(row=3, column=0, sticky=tk.NW)
 
         self.SelectedCSV = ttk.Label(self, text=FileLoc)
         self.SelectedCSV.grid(row=1, column=0, sticky=tk.NW)
@@ -109,22 +142,22 @@ class GUI(tk.Frame):
         
         self.DataScrollCorrect = tk.Scrollbar(self.correctFrame)
         self.DataScrollCorrect.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=405)
+        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
         self.DataCanvasCorrect.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollCorrect.config(command=self.DataCanvasCorrect.yview)
 
         self.DataScrollWrong = tk.Scrollbar(self.incorrectFrame)
         self.DataScrollWrong.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=405)
+        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
         self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
         
         self.DataScrollAll = tk.Scrollbar(self.allFrame)
         self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
-        self.DataCanvasAll = tk.Canvas(self.allFrame, yscrollcommand=self.DataScrollAll.set, relief=tk.FLAT, background = "#D2D2D2", width=520, height=405)
+        self.DataCanvasAll = tk.Canvas(self.allFrame, yscrollcommand=self.DataScrollAll.set, relief=tk.FLAT, background = "#D2D2D2", width=520, height=430)
         self.sideFrame = tk.Frame(self.allFrame)
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=100, background="#D2D2D2")
-        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=300, width=100, background="#D2D2D2")
+        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=325, width=100, background="#D2D2D2")
         self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
         self.DataScrollAll.config(command=self.DataCanvasAll.yview)
         self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=1, pady=1)
@@ -271,5 +304,7 @@ class GUI(tk.Frame):
             
 
     def Console(self):
-        print "Enter a command..."
-        exec raw_input(">>> ")
+        consoleUItk = tk.Tk()
+        consoleUItk.geometry('250x150')
+        consoleUI = ConsoleUI(consoleUItk)
+        thread.start_new_thread(consoleUI.mainloop, ())
