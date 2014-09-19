@@ -63,7 +63,7 @@ class GUI(tk.Frame):
         self.Init()
 
     def Init(self):
-        value_progress =300
+        value_progress = 300
         
         # self.menuFrame = ttk.Frame(self)
 
@@ -76,6 +76,10 @@ class GUI(tk.Frame):
         
         fileMenu = tk.Menu(menubar)
         fileMenu.add_command(label="Import")
+        fileMenu.add_command(label="Load")
+        fileMenu.add_command(label="Save")
+        fileMenu.add_command(label="Save As")
+        fileMenu.add_command(label="Export As")
         menubar.add_cascade(label="File", menu=fileMenu)
         
         viewMenu = tk.Menu(menubar)
