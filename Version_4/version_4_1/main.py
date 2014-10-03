@@ -14,6 +14,7 @@ import tkFileDialog
 # The code we actually wrote...
 import ImageEngine
 import GUI
+import functionBase
 
 def escape(x):
     res = ""

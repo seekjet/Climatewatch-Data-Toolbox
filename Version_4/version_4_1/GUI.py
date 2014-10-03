@@ -10,6 +10,8 @@ import time
 import tkFileDialog
 import tkMessageBox
 
+import functionBase
+
 # Global vars
 PBPercentage = 0
 FileLoc="No CSV File Selected"
@@ -51,6 +53,8 @@ def GlobalVars():
     Stop = 0
     global End
     End=0
+    global fileDict
+    fileDict={}
 
 class ConsoleUI(tk.Frame):
     def __init__(self, parent):
@@ -110,7 +114,7 @@ class GUI(tk.Frame):
         self.parent.config(menu=menubar)
         
         fileMenu = tk.Menu(menubar)
-        fileMenu.add_command(label="Import")
+        fileMenu.add_command(label="Import",command=self.fileI)
         fileMenu.add_command(label="Load")
         fileMenu.add_command(label="Save")
         fileMenu.add_command(label="Save As")
@@ -182,6 +186,13 @@ class GUI(tk.Frame):
         canvas.grid(column=0,row=999,sticky=tk.SW,columnspan=100)
 
         self.PBStart()
+
+    def fileI(self):
+        global fileDict
+        fileDict = functionBase.findFile('import')
+        #print fileDict['entries']['1']
+        
+        
         
        
 
@@ -214,7 +225,7 @@ class GUI(tk.Frame):
         with open(FileLoc, 'rb') as f:
             BirdFile = list(csv.reader(f))
 
-    def FindFile(self):
+    def FindFile(self,flag):
         global CurrentOp
         CurrentOp="Selecting CSV File..."
         global FileLoc

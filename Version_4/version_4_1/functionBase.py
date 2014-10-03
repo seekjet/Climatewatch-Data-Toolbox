@@ -1,5 +1,6 @@
-#needed modules: csv, 
+#needed modules: csv, tkFileDialog
 import csv
+import tkFileDialog
 
 #fileLocation in the format of C:/Users/Name/Desktop/cracticus_tibicen.csv
 def importFile(fileLocation):
@@ -33,3 +34,10 @@ def loadCDT(fileLocation):
     f = open(fileLocation,'r').read()
     fileDict=eval(f)
     return fileDict
+
+def findFile(flag):
+    if flag=='import':
+        fileLocation=tkFileDialog.askopenfilename(filetypes=[("CSV Files","*.csv")])
+        if fileLocation != "":
+            x=importFile(fileLocation)
+            return x
