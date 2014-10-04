@@ -1,6 +1,7 @@
-#needed modules: csv, tkFileDialog
+#needed modules: csv, tkFileDialog, json
 import csv
 import tkFileDialog
+import json
 
 #fileLocation in the format of C:/Users/Name/Desktop/cracticus_tibicen.csv
 def importFile(fileLocation):
@@ -32,19 +33,25 @@ def importFile(fileLocation):
     #put default options here
     del table
 
-    #save headers and dictionary to file
+    #Get file name and original format
     fileName = (fileLocation.split("/")[-1]).split('.')[0]
+    fileFormat=(fileLocation.split("/")[-1]).split('.')[-1]
     fileDict['details']['fileName']=fileName
-    target = open(fileName+'.cdt', 'w')
-    target.write(str(fileDict))
-
+    fileDict['details']['fileFormat']=fileFormat
+    #save dictionary to file
+    target = open(fileName+'.json', 'w')
+    #target.write(json.dump(fileDict))
+    json.dump(fileDict,target,indent=4,separators=(',',':'))
+    
     #return final dictionary
     return fileDict
 
 def loadCDT(fileLocation):
-    f = open(fileLocation,'r').read()
-    fileDict=eval(f)
+    f = open(fileLocation,'r')
+    fileDict=json.load(f)
+    print fileDict['details']['fileName']
     return fileDict
+loadCDT('C:/Users/Ryan/Documents/repositories/Climatewatch-Data-Toolbox/Version_4/version_4_1/cracticus_tibicen_112013-042014.json')
 
 def findFile(flag):
     if flag=='import':
