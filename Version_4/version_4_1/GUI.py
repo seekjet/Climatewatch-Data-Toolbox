@@ -115,9 +115,9 @@ class GUI(tk.Frame):
         
         fileMenu = tk.Menu(menubar)
         fileMenu.add_command(label="Import",command=self.fileI)
-        fileMenu.add_command(label="Load")
-        fileMenu.add_command(label="Save")
-        fileMenu.add_command(label="Save As")
+        fileMenu.add_command(label="Load",command=self.fileL)
+        fileMenu.add_command(label="Save",command=self.fileS)
+        fileMenu.add_command(label="Save As",command=self.fileSA)
         fileMenu.add_command(label="Export As")
         menubar.add_cascade(label="File", menu=fileMenu)
         
@@ -189,10 +189,19 @@ class GUI(tk.Frame):
 
     def fileI(self):
         global fileDict
-        fileDict = functionBase.findFile('import')
-        print fileDict['details']['totEntries']
+        fileDict = functionBase.readFile('import')
+        #print fileDict['details']['totEntries']
         
-        
+    def fileL(self):
+        global fileDict
+        fileDict = functionBase.readFile('load')
+        #print fileDict['details']['totEntries']
+
+    def fileSA(self):
+        fileDict['details']['saveLocation']=functionBase.writeFile('saveAs',fileDict)
+
+    def fileS(self):
+        functionBase.writeFile('save',fileDict)
         
        
 

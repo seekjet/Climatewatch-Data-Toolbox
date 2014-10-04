@@ -46,16 +46,40 @@ def importFile(fileLocation):
     #return final dictionary
     return fileDict
 
-def loadCDT(fileLocation):
+def loadJSON(fileLocation):
     f = open(fileLocation,'r')
     fileDict=json.load(f)
-    print fileDict['details']['fileName']
+    #print fileDict['details']['fileName']
     return fileDict
-loadCDT('C:/Users/Ryan/Documents/repositories/Climatewatch-Data-Toolbox/Version_4/version_4_1/cracticus_tibicen_112013-042014.json')
 
-def findFile(flag):
+
+def readFile(flag):
     if flag=='import':
         fileLocation=tkFileDialog.askopenfilename(filetypes=[("CSV Files","*.csv")])
         if fileLocation != "":
             x=importFile(fileLocation)
             return x
+    if flag=='load':
+        fileLocation=tkFileDialog.askopenfilename(filetypes=[("JSON Files","*.json")])
+        if fileLocation != "":
+            x=loadJSON(fileLocation)
+            return x
+
+def writeFile(flag,fileDict):
+    if flag=='saveAs':
+        fileLocation=tkFileDialog.asksaveasfilename(filetypes=[('JSON Files','*.json')],initialfile=(fileDict['details']['fileName']))
+        if fileLocation != "":
+            x=fileLocation.split('.')[-1]
+            if x!='json':
+                fileLocation=fileLocation+'.json'
+            fileDict['details']['saveLocation']=fileLocation
+            target = open(fileLocation,'w')
+            json.dump(fileDict,target,indent=4,separators=(',',':'))
+            return fileLocation
+    if flag=='save':
+        try:
+            target = open(fileDict['details']['saveLocation'],'w')
+            json.dump(fileDict,target,indent=4,separators=(',',':'))
+        except KeyError:
+            #popup of you need to save as first
+            print "no previous save location found"
