@@ -20,10 +20,21 @@ def importFile(fileLocation):
             fileDict['entries'][str(n)][str(item)]=table[n][h]
             h+=1
         n+=1
+    fileDict['details']={}
+    #put file details here
+    fileDict['details']['totEntries']=n
+    
+    #put file details here
+    fileDict['headers']=headers
+    fileDict['options']={}
+    #put default options here
+
+    #put default options here
     del table
 
     #save headers and dictionary to file
     fileName = (fileLocation.split("/")[-1]).split('.')[0]
+    fileDict['details']['fileName']=fileName
     target = open(fileName+'.cdt', 'w')
     target.write(str(fileDict))
 

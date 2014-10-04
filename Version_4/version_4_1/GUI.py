@@ -190,7 +190,7 @@ class GUI(tk.Frame):
     def fileI(self):
         global fileDict
         fileDict = functionBase.findFile('import')
-        #print fileDict['entries']['1']
+        print fileDict['details']['totEntries']
         
         
         
