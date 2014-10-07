@@ -334,6 +334,7 @@ class GUI(tk.Frame):
         self.incorrectFrame.grid(row=2, column=0)
 
     def Console(self):
+        exec raw_input("Enter your command:\n>>>")
         """
         consoleUItk = tk.Tk()
         consoleUItk.geometry('250x150')
