@@ -92,11 +92,14 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 class displayedEntry:
-    def __init__(self, rootCanvas, row):
+    def __init__(self, rootCanvas, rootFrame, row):
         self.rootCanvas = rootCanvas
         self.row = row
+        self.rootFrame = rootFrame
         self.entryCanvas = tk.Canvas(rootCanvas, height=100, width=500)
         self.entryCanvas.grid(row=self.row, padx=5, pady=2)
+        self.rootCanvas.config(scrollregion=(0,0,520,100*len(displayedEntryList)))
+        self.rootFrame.config(height=430)
         
     def __del__(self):
         self.entryCanvas.destroy()
@@ -167,14 +170,22 @@ class GUI(tk.Frame):
         self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
         
-        self.DataScrollAll = tk.Scrollbar(self.allFrame)
-        self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
-        self.DataCanvasAll = tk.Canvas(self.allFrame, yscrollcommand=self.DataScrollAll.set, relief=tk.FLAT, background = "#D2D2D2", width=520, height=430)
+        self.entryFrameAll = tk.Frame(self.allFrame, width=520, height=430)
+        self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
+        
+        self.DataCanvasAll = tk.Canvas(self.entryFrameAll, relief=tk.FLAT, background = "#D2D2D2", width=520, height=430, scrollregion=(0,0,520,9001)) # need to .config() when file is imported
+        self.DataScrollAll = tk.Scrollbar(self.entryFrameAll, orient=tk.VERTICAL)
+        #self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
+        self.DataScrollAll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.DataScrollAll.config(command=self.DataCanvasAll.yview)
+        self.DataCanvasAll.config(width=520, height=430)
+        self.DataCanvasAll.config(yscrollcommand=self.DataScrollAll.set)
+        #self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
+        self.DataCanvasAll.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        
         self.sideFrame = tk.Frame(self.allFrame)
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=100, background="#D2D2D2")
         self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=325, width=100, background="#D2D2D2")
-        self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
-        self.DataScrollAll.config(command=self.DataCanvasAll.yview)
         self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=1, pady=1)
         self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=1, pady=1)
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW)
@@ -343,7 +354,7 @@ class GUI(tk.Frame):
         """
         
     def addEntry(self):
-        displayedEntryList.append(displayedEntry(self.DataCanvasAll, len(displayedEntryList)+1))
+        displayedEntryList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, len(displayedEntryList)+1))
     
     def deleteEntry(self, index):
         del displayedEntryList[index]
