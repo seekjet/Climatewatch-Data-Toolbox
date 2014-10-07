@@ -21,6 +21,7 @@ Entry = 0
 Action = ""
 Stop = 0
 End=0
+displayedEntryList = []
 
 def escape(x):
     res = ""
@@ -89,6 +90,16 @@ class ConsoleUI(tk.Frame):
         
     def cancel(self):
         self.parent.destroy()
+        
+class displayedEntry:
+    def __init__(self, rootCanvas, row):
+        self.rootCanvas = rootCanvas
+        self.row = row
+        self.entryCanvas = tk.Canvas(rootCanvas, height=100, width=500)
+        self.entryCanvas.grid(row=self.row, padx=5, pady=2)
+        
+    def __del__(self):
+        self.entryCanvas.destroy()
         
 
 class GUI(tk.Frame):    
@@ -321,10 +332,17 @@ class GUI(tk.Frame):
         self.allFrame.grid_forget()
         self.correctFrame.grid_forget()
         self.incorrectFrame.grid(row=2, column=0)
-            
 
     def Console(self):
+        """
         consoleUItk = tk.Tk()
         consoleUItk.geometry('250x150')
         consoleUI = ConsoleUI(consoleUItk)
         thread.start_new_thread(consoleUI.mainloop, ())
+        """
+        
+    def addEntry(self):
+        displayedEntryList.append(displayedEntry(self.DataCanvasAll, len(displayedEntryList)+1))
+    
+    def deleteEntry(self, index):
+        del displayedEntryList[index]
