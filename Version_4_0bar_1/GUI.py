@@ -8,7 +8,6 @@ import Tkinter as tk
 import thread
 import time
 import tkFileDialog
-import tkMessageBox
 
 # Global vars
 PBPercentage = 0
@@ -87,7 +86,7 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 
-class GUI(tk.Frame):    
+class GUI(tk.Frame):
     def __init__(self, parent):
         GlobalVars()
         print ""
@@ -153,8 +152,8 @@ class GUI(tk.Frame):
         self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
         
         self.DataScrollAll = tk.Scrollbar(self.allFrame)
-        self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
         self.DataCanvasAll = tk.Canvas(self.allFrame, yscrollcommand=self.DataScrollAll.set, relief=tk.FLAT, background = "#D2D2D2", width=520, height=430)
+        self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
         self.sideFrame = tk.Frame(self.allFrame)
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=100, background="#D2D2D2")
         self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=325, width=100, background="#D2D2D2")
@@ -165,6 +164,13 @@ class GUI(tk.Frame):
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW)
         
         self.allFrame.grid(row=2, column=0)
+        
+        # test entries. These are demonstrations only, which will work until I make something less shit.
+        self.firstEntry = tk.Canvas(self.DataCanvasAll, height=100, width=500, background="#FFFFFF")
+        self.firstEntry.grid(row=0, padx=10, pady=5)
+        self.secondEntry = tk.Canvas(self.DataCanvasAll, height=100, width=500, background="#FFFFFF")
+        self.secondEntry.grid(row=1, padx=10, pady=5)
+        
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5)
         canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
@@ -182,7 +188,6 @@ class GUI(tk.Frame):
         canvas.grid(column=0,row=999,sticky=tk.SW,columnspan=100)
 
         self.PBStart()
-        
        
 
     def PBStart(self):
@@ -308,3 +313,10 @@ class GUI(tk.Frame):
         consoleUItk.geometry('250x150')
         consoleUI = ConsoleUI(consoleUItk)
         thread.start_new_thread(consoleUI.mainloop, ())
+        
+        
+    def displayEntry(self, frame):
+        self.test = tk.Canvas(frame, width=300)
+        self.test2 = tk.Label(self.test, text="Hello, world")
+        self.test.pack()
+        self.test2.pack()
