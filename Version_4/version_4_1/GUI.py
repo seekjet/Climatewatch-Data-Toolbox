@@ -92,12 +92,12 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 class displayedEntry:
-    def __init__(self, rootCanvas, rootFrame, innerFrame, row):
+    def __init__(self, rootCanvas, rootFrame, row):
         self.rootCanvas = rootCanvas
         self.row = row
         self.rootFrame = rootFrame
-        self.innerFrame = innerFrame
-        self.entryCanvas = tk.Canvas(innerFrame, height=100, width=500)
+        #self.innerFrame = innerFrame
+        self.entryCanvas = tk.Canvas(self.rootCanvas, height=100, width=500)
         self.entryCanvas.grid(row=self.row, padx=5, pady=2)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
         #self.rootCanvas.config(scrollregion=(0,0,520,430))
@@ -177,13 +177,14 @@ class GUI(tk.Frame):
         self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
         
         self.DataCanvasAll=tk.Canvas(self.entryFrameAll,background="#D2D2D2")
-        self.dataFrameAll=tk.Frame(self.DataCanvasAll)
+        self.DataCanvasAll.grid_propagate(False)
+        #self.dataFrameAll=tk.Frame(self.DataCanvasAll)
         self.scrollBarAll=tk.Scrollbar(self.entryFrameAll,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
         self.DataCanvasAll.configure(yscrollcommand=self.scrollBarAll.set)
 
         self.scrollBarAll.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasAll.pack(side=tk.LEFT)
-        self.DataCanvasAll.create_window((0,0),window=self.dataFrameAll,anchor=tk.NW)
+        #self.DataCanvasAll.create_window((0,0),window=self.dataFrameAll,anchor=tk.NW)
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
         
         
@@ -370,7 +371,7 @@ class GUI(tk.Frame):
         """
         
     def addEntry(self):
-        displayedEntryList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedEntryList)+1))
+        displayedEntryList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, len(displayedEntryList)+1))
     
     def deleteEntry(self, index):
         del displayedEntryList[index]
