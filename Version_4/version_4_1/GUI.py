@@ -177,7 +177,6 @@ class GUI(tk.Frame):
         self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
         
         self.DataCanvasAll=tk.Canvas(self.entryFrameAll,background="#D2D2D2")
-        self.DataCanvasAll.grid_propagate(False)
         self.dataFrameAll=tk.Frame(self.DataCanvasAll)
         self.scrollBarAll=tk.Scrollbar(self.entryFrameAll,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
         self.DataCanvasAll.configure(yscrollcommand=self.scrollBarAll.set)
@@ -186,6 +185,8 @@ class GUI(tk.Frame):
         self.DataCanvasAll.pack(side=tk.LEFT)
         self.DataCanvasAll.create_window((0,0),window=self.dataFrameAll,anchor=tk.NW)
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        
+        self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
         
         
 
@@ -225,6 +226,9 @@ class GUI(tk.Frame):
         canvas.grid(column=0,row=999,sticky=tk.SW,columnspan=100)
 
         self.PBStart()
+        
+    def configScrollRegion(self, event):
+        self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
 
     def fileI(self):
         global fileDict
