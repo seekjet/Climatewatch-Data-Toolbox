@@ -97,13 +97,18 @@ class displayedEntry:
         self.row = row
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
-        self.entryCanvas = tk.Canvas(self.innerFrame, height=100, width=500)
+        self.entryCanvas = tk.Canvas(self.innerFrame, height=100, width=500, bg="#D2D2D2")
         self.entryCanvas.grid(row=self.row, padx=5, pady=2)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
         #self.rootCanvas.config(scrollregion=(0,0,520,430))
         #self.rootCanvas.config(height=430)
         #self.rootFrame.config(height=430)
+        self.sanityTest()
         
+    def sanityTest(self):
+        self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
+        self.entryCanvas.create_window(5, 5, window=self.testLabel,anchor=tk.NW)
+    
     def __del__(self):
         self.entryCanvas.destroy()
         
@@ -183,7 +188,7 @@ class GUI(tk.Frame):
 
         self.scrollBarAll.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasAll.pack(side=tk.LEFT)
-        self.DataCanvasAll.create_window((0,0),window=self.dataFrameAll,anchor=tk.NW)
+        self.DataCanvasAll.create_window(0, 0, window=self.dataFrameAll,anchor=tk.NW)
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
         
         self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
