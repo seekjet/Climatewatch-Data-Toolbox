@@ -100,9 +100,6 @@ class displayedEntry:
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
-        #self.rootCanvas.config(scrollregion=(0,0,520,430))
-        #self.rootCanvas.config(height=430)
-        #self.rootFrame.config(height=430)
         self.sanityTest()
         
     def sanityTest(self):
@@ -194,18 +191,6 @@ class GUI(tk.Frame):
         self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
         
         
-
-        """
-        self.DataCanvasAll = tk.Canvas(self.entryFrameAll, relief=tk.FLAT, background = "#D2D2D2", width=520, height=430, scrollregion=(0,0,520,9001)) # need to .config() when file is imported
-        self.DataScrollAll = tk.Scrollbar(self.entryFrameAll, orient=tk.VERTICAL)
-        #self.DataScrollAll.grid(column=999, row=0, sticky=tk.E+tk.N, columnspan=300)
-        self.DataScrollAll.pack(side=tk.RIGHT, fill=tk.Y)
-        self.DataScrollAll.config(command=self.DataCanvasAll.yview)
-        self.DataCanvasAll.config(width=520, height=430)
-        self.DataCanvasAll.config(yscrollcommand=self.DataScrollAll.set)
-        #self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
-        self.DataCanvasAll.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-        """
         self.sideFrame = tk.Frame(self.allFrame, background = "#D2D2D2")
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=98,highlightthickness=0)
         self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
