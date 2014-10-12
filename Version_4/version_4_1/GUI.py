@@ -153,21 +153,21 @@ class GUI(tk.Frame):
         editMenu.add_command(label="Console", command=self.Console)
         menubar.add_cascade(label="Edit", menu=editMenu)
 
-        self.SelectedCSV = ttk.Label(self, text=FileLoc)
-        self.SelectedCSV.grid(row=0, column=0, sticky=tk.NW)
-
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
         
-        self.tabsFrame = tk.Frame(self)
-        self.tabsFrame.grid(row=1)
+        self.tabsFrame = tk.Frame(self, bg="#F0F0F0")
+        self.tabsFrame.grid(row=1, sticky=tk.N+tk.W+tk.E)
+        
+        self.SelectedCSV = ttk.Label(self.tabsFrame, text=FileLoc)
+        self.SelectedCSV.grid(row=0, column=1)
         
         self.displayAllButton = tk.Button(self.tabsFrame, text="All Entries", command=self.showAllEntries)
         self.displayCorrectButton = tk.Button(self.tabsFrame, text="Correct Entries", command=self.showCorrectEntries)
         self.displayIncorrectButton = tk.Button(self.tabsFrame, text="Incorrect Entries", command=self.showIncorrectEntries)
-        self.displayAllButton.pack(side=tk.LEFT)
-        self.displayCorrectButton.pack(side=tk.LEFT)
-        self.displayIncorrectButton.pack(side=tk.LEFT)
+        self.displayAllButton.grid(row=1, column=2)
+        self.displayCorrectButton.grid(row=1, column=3)
+        self.displayIncorrectButton.grid(row=1, column=4)
         
         self.correctFrame = ttk.Frame(self)
         self.incorrectFrame = ttk.Frame(self)
