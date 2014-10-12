@@ -97,7 +97,7 @@ class displayedEntry:
         self.row = row
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
-        self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=504)
+        self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
         #self.rootCanvas.config(scrollregion=(0,0,520,430))
@@ -164,25 +164,25 @@ class GUI(tk.Frame):
         
         self.correctFrame = ttk.Frame(self)
         self.incorrectFrame = ttk.Frame(self)
-        self.allFrame = ttk.Frame(self)
+        self.allFrame = tk.Frame(self)
         
         self.DataScrollCorrect = tk.Scrollbar(self.correctFrame)
         self.DataScrollCorrect.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
+        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, highlightthickness=0, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
         self.DataCanvasCorrect.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollCorrect.config(command=self.DataCanvasCorrect.yview)
 
         self.DataScrollWrong = tk.Scrollbar(self.incorrectFrame)
         self.DataScrollWrong.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
+        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, highlightthickness=0, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
         self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
         self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
         
         self.entryFrameAll = tk.Frame(self.allFrame, width=520, height=430,bd=1)
-        self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=0)
+        self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
-        self.DataCanvasAll=tk.Canvas(self.entryFrameAll, background="#D2D2D2")
-        self.dataFrameAll=tk.Frame(self.DataCanvasAll, background="#000000", borderwidth=1)
+        self.DataCanvasAll=tk.Canvas(self.entryFrameAll, background="#D2D2D2", highlightthickness=0)
+        self.dataFrameAll=tk.Frame(self.DataCanvasAll, background="#D2D2D2", borderwidth=1)
         self.scrollBarAll=tk.Scrollbar(self.entryFrameAll,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
         self.DataCanvasAll.configure(yscrollcommand=self.scrollBarAll.set)
 
@@ -206,16 +206,18 @@ class GUI(tk.Frame):
         #self.DataCanvasAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=1, pady=1)
         self.DataCanvasAll.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
         """
-        self.sideFrame = tk.Frame(self.allFrame)
-        self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=100, background="#D2D2D2")
-        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=325, width=100, background="#D2D2D2")
-        self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=1, pady=1)
-        self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=1, pady=1)
-        self.sideFrame.grid(column=0, row=0, sticky=tk.NW)
+        self.sideFrame = tk.Frame(self.allFrame, background = "#D2D2D2")
+        self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=98,highlightthickness=0)
+        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
+        self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=2, pady=2)
+        self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=2, pady=0)
+        self.shit=tk.Canvas(self.sideFrame,height=2,width=98,highlightthickness=0,background = "#D2D2D2")
+        self.shit.grid(column=0,row=2,sticky=tk.NW)
+        self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
         
         self.allFrame.grid(row=2, column=0)
 
-        canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5)
+        canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5, highlightthickness=0)
         canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
 
 
