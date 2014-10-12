@@ -98,7 +98,7 @@ class displayedEntry:
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=504)
-        self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
+        self.entryCanvas.grid(row=self.row, pady=0, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
         #self.rootCanvas.config(scrollregion=(0,0,520,430))
         #self.rootCanvas.config(height=430)
