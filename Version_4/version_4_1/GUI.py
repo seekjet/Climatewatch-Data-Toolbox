@@ -154,10 +154,20 @@ class GUI(tk.Frame):
         menubar.add_cascade(label="Edit", menu=editMenu)
 
         self.SelectedCSV = ttk.Label(self, text=FileLoc)
-        self.SelectedCSV.grid(row=1, column=0, sticky=tk.NW)
+        self.SelectedCSV.grid(row=0, column=0, sticky=tk.NW)
 
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
+        
+        self.tabsFrame = tk.Frame(self)
+        self.tabsFrame.grid(row=1)
+        
+        self.displayAllButton = tk.Button(self.tabsFrame, text="All Entries", command=self.showAllEntries)
+        self.displayCorrectButton = tk.Button(self.tabsFrame, text="Correct Entries", command=self.showCorrectEntries)
+        self.displayIncorrectButton = tk.Button(self.tabsFrame, text="Incorrect Entries", command=self.showIncorrectEntries)
+        self.displayAllButton.pack(side=tk.LEFT)
+        self.displayCorrectButton.pack(side=tk.LEFT)
+        self.displayIncorrectButton.pack(side=tk.LEFT)
         
         self.correctFrame = ttk.Frame(self)
         self.incorrectFrame = ttk.Frame(self)
@@ -196,8 +206,6 @@ class GUI(tk.Frame):
         self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
         self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=2, pady=2)
         self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=2, pady=0)
-        self.shit=tk.Canvas(self.sideFrame,height=2,width=98,highlightthickness=0,background = "#D2D2D2")
-        self.shit.grid(column=0,row=2,sticky=tk.NW)
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
         
         self.allFrame.grid(row=2, column=0)
@@ -352,7 +360,7 @@ class GUI(tk.Frame):
         self.incorrectFrame.grid_forget()
         self.correctFrame.grid(row=2, column=0)
         
-    def showInorrectEntries(self):
+    def showIncorrectEntries(self):
         self.allFrame.grid_forget()
         self.correctFrame.grid_forget()
         self.incorrectFrame.grid(row=2, column=0)
