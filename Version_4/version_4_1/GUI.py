@@ -169,22 +169,11 @@ class GUI(tk.Frame):
         self.displayCorrectButton.grid(row=1, column=3)
         self.displayIncorrectButton.grid(row=1, column=4)
         
-        self.correctFrame = ttk.Frame(self)
-        self.incorrectFrame = ttk.Frame(self)
+        self.correctFrame = tk.Frame(self)
+        self.incorrectFrame = tk.Frame(self)
         self.allFrame = tk.Frame(self)
         
-        self.DataScrollCorrect = tk.Scrollbar(self.correctFrame)
-        self.DataScrollCorrect.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasCorrect = tk.Canvas(self.correctFrame, yscrollcommand=self.DataScrollCorrect.set, highlightthickness=0, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
-        self.DataCanvasCorrect.grid(column=0, row=5, sticky=tk.W, columnspan=50)
-        self.DataScrollCorrect.config(command=self.DataCanvasCorrect.yview)
-
-        self.DataScrollWrong = tk.Scrollbar(self.incorrectFrame)
-        self.DataScrollWrong.grid(column=50, row=5, sticky=tk.W)
-        self.DataCanvasWrong = tk.Canvas(self.incorrectFrame, highlightthickness=0, yscrollcommand=self.DataScrollWrong.set, relief=tk.FLAT, background = "#D2D2D2", width=620, height=430)
-        self.DataCanvasWrong.grid(column=0, row=5, sticky=tk.W, columnspan=50)
-        self.DataScrollWrong.config(command=self.DataCanvasWrong.yview)
-        
+        # AllFrame
         self.entryFrameAll = tk.Frame(self.allFrame, width=520, height=430,bd=1)
         self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
@@ -199,6 +188,38 @@ class GUI(tk.Frame):
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
         
         self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
+        
+        #CorrectFrame
+        self.entryFrameCorrect = tk.Frame(self.correctFrame, width=640, height=430,bd=1)
+        self.entryFrameCorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
+        
+        self.DataCanvasCorrect=tk.Canvas(self.entryFrameCorrect, background="#D2D2D2", highlightthickness=0)
+        self.dataFrameCorrect=tk.Frame(self.DataCanvasCorrect, background="#D2D2D2", borderwidth=1)
+        self.scrollBarCorrect=tk.Scrollbar(self.entryFrameCorrect,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
+        self.DataCanvasCorrect.configure(yscrollcommand=self.scrollBarCorrect.set)
+
+        self.scrollBarCorrect.pack(side=tk.RIGHT,fill=tk.Y)
+        self.DataCanvasCorrect.pack(side=tk.LEFT)
+        self.DataCanvasCorrect.create_window(0, 0, window=self.dataFrameCorrect,anchor=tk.NW)
+        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        
+        self.dataFrameCorrect.bind("<Configure>", self.configScrollRegion)
+        
+        # IncorrectFrame
+        self.entryFrameIncorrect = tk.Frame(self.incorrectFrame, width=640, height=430,bd=1)
+        self.entryFrameIncorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
+        
+        self.DataCanvasIncorrect=tk.Canvas(self.entryFrameIncorrect, background="#D2D2D2", highlightthickness=0)
+        self.dataFrameIncorrect=tk.Frame(self.DataCanvasIncorrect, background="#D2D2D2", borderwidth=1)
+        self.scrollBarIncorrect=tk.Scrollbar(self.entryFrameIncorrect,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
+        self.DataCanvasIncorrect.configure(yscrollcommand=self.scrollBarIncorrect.set)
+
+        self.scrollBarIncorrect.pack(side=tk.RIGHT,fill=tk.Y)
+        self.DataCanvasIncorrect.pack(side=tk.LEFT)
+        self.DataCanvasIncorrect.create_window(0, 0, window=self.dataFrameIncorrect,anchor=tk.NW)
+        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        
+        self.dataFrameIncorrect.bind("<Configure>", self.configScrollRegion)
         
         
         self.sideFrame = tk.Frame(self.allFrame, background = "#D2D2D2")
@@ -358,12 +379,12 @@ class GUI(tk.Frame):
     def showCorrectEntries(self):
         self.allFrame.grid_forget()
         self.incorrectFrame.grid_forget()
-        self.correctFrame.grid(row=2, column=0)
+        self.correctFrame.grid(row=2, column=0, padx=50)
         
     def showIncorrectEntries(self):
         self.allFrame.grid_forget()
         self.correctFrame.grid_forget()
-        self.incorrectFrame.grid(row=2, column=0)
+        self.incorrectFrame.grid(row=2, column=0, padx=50)
 
     def Console(self):
         exec raw_input("Enter your command:\n>>>")
