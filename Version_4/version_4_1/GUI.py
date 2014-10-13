@@ -92,11 +92,12 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 class displayedEntry:
-    def __init__(self, rootCanvas, rootFrame, innerFrame, row):
+    def __init__(self, rootCanvas, rootFrame, innerFrame, row, uid):
         self.rootCanvas = rootCanvas
         self.row = row
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
+        self.uid = uid
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
@@ -396,7 +397,26 @@ class GUI(tk.Frame):
         """
         
     def addEntry(self):
-        displayedEntryList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedEntryList)+1))
+        displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), len(displayedEntryList)))
     
     def deleteEntry(self, index):
         del displayedEntryList[index]
+        
+    def move(self, uid):
+        index = -1
+        for i in range(len(displayedEntryList)):
+            if displayedEntryList[i].uid == uid:
+                index = i
+                
+        if index == -1:
+            return
+            
+        entry = displayedEntryList[index]
+            
+        if displayedEntryList[index].rootFrame == self.entryFrameCorrect:
+            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), displayedEntryList[index].uid))
+            del displayedEntryList[index]
+            
+        elif displayedEntryList[index].rootFrame == self.entryFrameIncorrect:
+            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), displayedEntryList[index].uid))
+            del displayedEntryList[index]
