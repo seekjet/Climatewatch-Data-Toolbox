@@ -411,8 +411,6 @@ class GUI(tk.Frame):
         if index == -1:
             return
             
-        entry = displayedEntryList[index]
-            
         if displayedEntryList[index].rootFrame == self.entryFrameCorrect:
             displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), displayedEntryList[index].uid))
             del displayedEntryList[index]
