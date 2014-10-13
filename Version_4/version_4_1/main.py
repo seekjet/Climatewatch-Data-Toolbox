@@ -50,6 +50,6 @@ def GlobalVars():
         
 
 tkin=tk.Tk()
-tkin.geometry('640x510')
+tkin.geometry('640x490')
 gui = GUI.GUI(tkin)
 gui.mainloop()
