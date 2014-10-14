@@ -22,6 +22,7 @@ Action = ""
 Stop = 0
 End=0
 displayedEntryList = []
+displayedAllList = []
 
 def escape(x):
     res = ""
@@ -104,8 +105,9 @@ class displayedEntry:
         self.sanityTest()
         
     def sanityTest(self):
+        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill="#81F781", outline="#D9D9D9")
         self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
-        self.entryCanvas.create_window(0, 0, window=self.testLabel,anchor=tk.NW)
+        self.entryCanvas.create_window(100, 0, window=self.testLabel,anchor=tk.NW)
     
     def __del__(self):
         self.entryCanvas.destroy()
@@ -398,23 +400,34 @@ class GUI(tk.Frame):
         
     def addEntry(self):
         displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), len(displayedEntryList)))
+        displayedAllList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), len(displayedAllList)))
     
     def deleteEntry(self, index):
         del displayedEntryList[index]
         
     def move(self, uid):
-        index = -1
+        indexEntry = -1
         for i in range(len(displayedEntryList)):
             if displayedEntryList[i].uid == uid:
-                index = i
+                indexEntry = i
                 
-        if index == -1:
+        if indexEntry == -1:
             return
             
-        if displayedEntryList[index].rootFrame == self.entryFrameCorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), displayedEntryList[index].uid))
-            del displayedEntryList[index]
+        indexAll = -1
+        for i in range(len(displayedAllList)):
+            if displayedAllList[i].uid == uid:
+                indexAll = i
+                
+        if indexAll == -1:
+            return
             
-        elif displayedEntryList[index].rootFrame == self.entryFrameIncorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), displayedEntryList[index].uid))
-            del displayedEntryList[index]
+        if displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
+            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), displayedEntryList[indexEntry].uid))
+            displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#F5A9A9")
+            del displayedEntryList[indexEntry]
+            
+        elif displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
+            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), displayedEntryList[indexEntry].uid))
+            displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
+            del displayedEntryList[indexEntry]
