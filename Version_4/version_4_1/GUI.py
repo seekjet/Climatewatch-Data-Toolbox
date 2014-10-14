@@ -93,7 +93,7 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 class displayedEntry:
-    def __init__(self, rootCanvas, rootFrame, innerFrame, row, uid):
+    def __init__(self, rootCanvas, rootFrame, innerFrame, row, bgcolor, uid):
         self.rootCanvas = rootCanvas
         self.row = row
         self.rootFrame = rootFrame
@@ -102,10 +102,10 @@ class displayedEntry:
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
-        self.sanityTest()
+        self.sanityTest(bgcolor)
         
-    def sanityTest(self):
-        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill="#81F781", outline="#D9D9D9")
+    def sanityTest(self, bgcolor):
+        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=bgcolor, outline="#D9D9D9")
         self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
         self.entryCanvas.create_window(100, 0, window=self.testLabel,anchor=tk.NW)
     
@@ -399,8 +399,8 @@ class GUI(tk.Frame):
         """
         
     def addEntry(self):
-        displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), len(displayedEntryList)))
-        displayedAllList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), len(displayedAllList)))
+        displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
+        displayedAllList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), "#81F781", len(displayedAllList)))
     
     def deleteEntry(self, index):
         del displayedEntryList[index]
@@ -423,11 +423,11 @@ class GUI(tk.Frame):
             return
             
         if displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), displayedEntryList[indexEntry].uid))
+            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), "#F5A9A9", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#F5A9A9")
             del displayedEntryList[indexEntry]
             
         elif displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), displayedEntryList[indexEntry].uid))
+            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
             del displayedEntryList[indexEntry]
