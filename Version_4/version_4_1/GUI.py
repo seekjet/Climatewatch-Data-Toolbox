@@ -93,7 +93,7 @@ class ConsoleUI(tk.Frame):
         self.parent.destroy()
         
 class displayedEntry:
-    def __init__(self, rootCanvas, rootFrame, innerFrame, row, bgcolor, uid):
+    def __init__(self, rootCanvas, rootFrame, innerFrame, row, flagcolor, uid):
         self.rootCanvas = rootCanvas
         self.row = row
         self.rootFrame = rootFrame
@@ -102,10 +102,10 @@ class displayedEntry:
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
-        self.sanityTest(bgcolor)
+        self.sanityTest(flagcolor)
         
-    def sanityTest(self, bgcolor):
-        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=bgcolor, outline="#D9D9D9")
+    def sanityTest(self, flagcolor):
+        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=flagcolor, outline="#D9D9D9")
         self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
         self.entryCanvas.create_window(100, 0, window=self.testLabel,anchor=tk.NW)
     
@@ -402,8 +402,25 @@ class GUI(tk.Frame):
         displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
         displayedAllList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), "#81F781", len(displayedAllList)))
     
-    def deleteEntry(self, index):
-        del displayedEntryList[index]
+    def deleteEntry(self, uid):
+        indexEntry = -1
+        for i in range(len(displayedEntryList)):
+            if displayedEntryList[i].uid == uid:
+                indexEntry = i
+                
+        if indexEntry == -1:
+            return
+            
+        indexAll = -1
+        for i in range(len(displayedAllList)):
+            if displayedAllList[i].uid == uid:
+                indexAll = i
+                
+        if indexAll == -1:
+            return
+            
+        del displayedEntryList[indexEntry]
+        del displayedAllList[indexAll]
         
     def move(self, uid):
         indexEntry = -1
