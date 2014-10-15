@@ -102,12 +102,17 @@ class displayedEntry:
         self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
-        self.sanityTest(flagcolor)
+        self.picturePath = "resources/default.png"
         
-    def sanityTest(self, flagcolor):
+        self.drawItems(flagcolor)
+        
+    def drawItems(self, flagcolor):
         self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=flagcolor, outline="#D9D9D9")
-        self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
-        self.entryCanvas.create_window(100, 0, window=self.testLabel,anchor=tk.NW)
+        # self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
+        photo = tk.PhotoImage(file=self.picturePath)
+        self.picture = tk.Label(self.entryCanvas, image=photo, width=94, height=94)
+        self.picture.photo = photo
+        self.entryCanvas.create_window(20, 0, window=self.picture,anchor=tk.NW)
     
     def __del__(self):
         self.entryCanvas.destroy()
@@ -289,7 +294,7 @@ class GUI(tk.Frame):
         if Action == "Processing":
             self.ProgressBar["maximum"]=Entries
             self.ProgressBar["value"]=Entry
-        if PBPercentage > self.PBMax or PBPercentage == self.PBMax:
+        if PBPercentage >= self.PBMax:
             global PBPercentage
             PBPercentage = 0
             self.after(100, self.PBChange)
