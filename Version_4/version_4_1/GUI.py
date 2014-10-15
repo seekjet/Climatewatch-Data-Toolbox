@@ -116,6 +116,7 @@ class displayedEntry:
     
     def __del__(self):
         self.entryCanvas.destroy()
+        self.picture.destroy()
         
 
 class GUI(tk.Frame):    
