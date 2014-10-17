@@ -93,7 +93,35 @@ class ConsoleUI(tk.Frame):
     def cancel(self):
         self.parent.destroy()
         
-class displayedEntry:
+class ExpandImage(tk.Frame):
+    def __init__(self, parent, picturePath):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.height = self.winfo_reqheight()
+        self.width = self.winfo_reqwidth()
+        
+        self.picturePath = picturePath
+        self.original = Image.open(self.picturePath)
+        self.aspectRatio = float(self.original.size[0])/float(self.original.size[1])
+        photo = ImageTk.PhotoImage(self.original)
+        self.image = tk.Label(self, image=photo, bg="#000000")
+        self.image.photo = photo
+        self.image.pack(fill = tk.BOTH, expand = True)
+        self.pack(fill = tk.BOTH, expand = True)
+        
+        self.image.bind("<Configure>", self.updateDimens)
+        
+    def updateDimens(self, event):
+        self.parent.geometry(str(event.width)+"x"+str(event.height))
+        photo = ImageTk.PhotoImage(self.original.resize((int(event.width*self.aspectRatio), event.height)))
+        self.image.config(image=photo)
+        self.image.photo = photo
+        
+    def __del__(self):
+        self.image.destroy()
+        
+        
+class DisplayedEntry:
     def __init__(self, rootCanvas, rootFrame, innerFrame, row, flagcolor, uid):
         self.rootCanvas = rootCanvas
         self.row = row
@@ -117,8 +145,14 @@ class displayedEntry:
             photo = photo.resize((96, int(64/aspectRatio)), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(photo)
         self.picture = tk.Label(self.entryCanvas, image=photo, width=96, height=64, bg="#000000")
+        self.picture.bind("<Button-1>", self.expandImage)
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture,anchor=tk.NW)
+        
+    def expandImage(self, event):
+        imageRoot = tk.Toplevel()
+        imageFrame = ExpandImage(imageRoot, self.picturePath)
+        imageRoot.mainloop()
     
     def __del__(self):
         self.entryCanvas.destroy()
@@ -404,15 +438,15 @@ class GUI(tk.Frame):
     def Console(self):
         exec raw_input("Enter your command:\n>>>")
         """
-        consoleUItk = tk.Tk()
+        consoleUItk = tk.Toplevel()
         consoleUItk.geometry('250x150')
         consoleUI = ConsoleUI(consoleUItk)
         thread.start_new_thread(consoleUI.mainloop, ())
         """
         
     def addEntry(self):
-        displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
-        displayedAllList.append(displayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), "#81F781", len(displayedAllList)))
+        displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
+        displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), "#81F781", len(displayedAllList)))
     
     def deleteEntry(self, uid):
         indexEntry = -1
@@ -452,11 +486,11 @@ class GUI(tk.Frame):
             return
             
         if displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), "#F5A9A9", displayedEntryList[indexEntry].uid))
+            displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), "#F5A9A9", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#F5A9A9")
             del displayedEntryList[indexEntry]
             
         elif displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
-            displayedEntryList.append(displayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
+            displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
             del displayedEntryList[indexEntry]
