@@ -100,7 +100,7 @@ class displayedEntry:
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
         self.uid = uid
-        self.entryCanvas = tk.Canvas(self.innerFrame, height=94, width=502)
+        self.entryCanvas = tk.Canvas(self.innerFrame, height=64, width=502)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
         self.picturePath = "resources/default.png"
@@ -108,12 +108,15 @@ class displayedEntry:
         self.drawItems(flagcolor)
         
     def drawItems(self, flagcolor):
-        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=flagcolor, outline="#D9D9D9")
+        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=flagcolor, outline="#D9D9D9")
         photo = Image.open(self.picturePath)
         aspectRatio = float(photo.size[0])/float(photo.size[1])
-        photo = photo.resize((int(aspectRatio*90),90), Image.ANTIALIAS)
+        if aspectRatio < 96.0/64.0:
+            photo = photo.resize((int(aspectRatio*96), 64), Image.ANTIALIAS)
+        else:
+            photo = photo.resize((96, int(64/aspectRatio)), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(photo)
-        self.picture = tk.Label(self.entryCanvas, image=photo, width=160, height=90, bg="#000000")
+        self.picture = tk.Label(self.entryCanvas, image=photo, width=96, height=64, bg="#000000")
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture,anchor=tk.NW)
     
