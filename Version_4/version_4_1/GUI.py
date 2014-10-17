@@ -110,7 +110,8 @@ class displayedEntry:
     def drawItems(self, flagcolor):
         self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=flagcolor, outline="#D9D9D9")
         photo = Image.open(self.picturePath)
-        photo = photo.resize((160,90), Image.ANTIALIAS)
+        aspectRatio = float(photo.size[0])/float(photo.size[1])
+        photo = photo.resize((int(aspectRatio*90),90), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(photo)
         self.picture = tk.Label(self.entryCanvas, image=photo, width=160, height=90, bg="#000000")
         self.picture.photo = photo
