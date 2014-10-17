@@ -9,6 +9,7 @@ import thread
 import time
 import tkFileDialog
 import tkMessageBox
+from PIL import Image, ImageTk
 
 import functionBase
 
@@ -108,9 +109,10 @@ class displayedEntry:
         
     def drawItems(self, flagcolor):
         self.flagRect = self.entryCanvas.create_rectangle(1,1,16,94, fill=flagcolor, outline="#D9D9D9")
-        # self.testLabel = tk.Label(self.entryCanvas, text="Hello, world!")
-        photo = tk.PhotoImage(file=self.picturePath)
-        self.picture = tk.Label(self.entryCanvas, image=photo, width=94, height=94)
+        photo = Image.open(self.picturePath)
+        photo = photo.resize((160,90), Image.ANTIALIAS)
+        photo = ImageTk.PhotoImage(photo)
+        self.picture = tk.Label(self.entryCanvas, image=photo, width=160, height=90, bg="#000000")
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture,anchor=tk.NW)
     
