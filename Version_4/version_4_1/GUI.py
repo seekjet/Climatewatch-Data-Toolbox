@@ -2,13 +2,11 @@ import urllib
 import csv
 import os
 from sys import platform as SYS_PLATFORM
-import shutil
 import ttk
 import Tkinter as tk
 import thread
 import time
 import tkFileDialog
-import tkMessageBox
 from PIL import Image, ImageTk
 
 import functionBase

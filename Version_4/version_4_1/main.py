@@ -1,15 +1,7 @@
 #!/usr/bin/env python2
 
-import urllib
-import csv
-import os
 from sys import platform as SYS_PLATFORM
-import shutil
-import ttk
 import Tkinter as tk
-import thread
-import time
-import tkFileDialog
 
 # The code we actually wrote...
 import ImageEngine

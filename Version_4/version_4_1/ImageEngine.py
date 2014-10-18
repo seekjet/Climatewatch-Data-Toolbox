@@ -2,12 +2,7 @@ import urllib
 import csv
 import os
 from sys import platform as SYS_PLATFORM
-import shutil
-import ttk
-import Tkinter as tk
-import thread
-import time
-import tkFileDialog
+from shutil import move as shmove
 
 # Global vars
 PBPercentage = 0
@@ -164,10 +159,10 @@ def Engine():
                     CurrentOp="Moving image from entry "+str(Line)+" out of "+str(Entries)+" to "+MoveToDir
 
                     try:
-                        shutil.move(str(CatNum)+".jpg",MoveToDir)
+                        shmove(str(CatNum)+".jpg",MoveToDir)
                     except:
                         os.remove(MoveToDir+file_delimeter+str(CatNum)+".jpg")
-                        shutil.move(str(CatNum)+".jpg",MoveToDir)
+                        shmove(str(CatNum)+".jpg",MoveToDir)
                     print ""
                     print "done"
                     print ""
