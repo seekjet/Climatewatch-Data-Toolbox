@@ -99,6 +99,7 @@ class ExpandImage(tk.Frame):
         self.parent = parent
         self.height = self.winfo_reqheight()
         self.width = self.winfo_reqwidth()
+        self.parent.title("Climatewatch Data Toolbox - "+self.stripFileName(picturePath))
         
         self.picturePath = picturePath
         self.original = Image.open(self.picturePath)
@@ -113,9 +114,18 @@ class ExpandImage(tk.Frame):
         
     def updateDimens(self, event):
         self.parent.geometry(str(event.width)+"x"+str(event.height))
-        photo = ImageTk.PhotoImage(self.original.resize((int(event.width*self.aspectRatio), event.height)))
+        photo = ImageTk.PhotoImage(self.original.resize((int(event.height*self.aspectRatio), event.height)))
         self.image.config(image=photo)
         self.image.photo = photo
+        
+    def stripFileName(self, fileName):
+        temp = ""
+        for i in reversed(fileName):
+            if i == file_delimeter:
+                break
+            else:
+                temp = i + temp
+        return temp
         
     def __del__(self):
         self.image.destroy()
@@ -147,7 +157,9 @@ class DisplayedEntry:
         self.picture = tk.Label(self.entryCanvas, image=photo, width=96, height=64, bg="#000000")
         self.picture.bind("<Button-1>", self.expandImage)
         self.picture.photo = photo
-        self.entryCanvas.create_window(20, 0, window=self.picture,anchor=tk.NW)
+        self.entryCanvas.create_window(20, 0, window=self.picture, anchor=tk.NW)
+        self.displayedData = tk.Listbox(self.entryCanvas)
+        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW)
         
     def expandImage(self, event):
         imageRoot = tk.Toplevel()
@@ -174,7 +186,7 @@ class GUI(tk.Frame):
         
         # self.menuFrame = ttk.Frame(self)
 
-        self.parent.title("No-Name File Program")
+        self.parent.title("Climatewatch Data Toolbox")
         self.config(bg='#F0F0F0')
         self.pack(fill = tk.BOTH, expand = 1)
         
