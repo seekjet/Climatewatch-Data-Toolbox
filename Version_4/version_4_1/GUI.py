@@ -114,7 +114,10 @@ class ExpandImage(tk.Frame):
         
     def updateDimens(self, event):
         self.parent.geometry(str(event.width)+"x"+str(event.height))
-        photo = ImageTk.PhotoImage(self.original.resize((int(event.height*self.aspectRatio), event.height)))
+        if self.aspectRatio < float(event.width)/float(event.height):
+            photo = ImageTk.PhotoImage(self.original.resize((int(event.height*self.aspectRatio), event.height)))
+        else:
+            photo = ImageTk.PhotoImage(self.original.resize((event.width, int(event.width/self.aspectRatio))))
         self.image.config(image=photo)
         self.image.photo = photo
         
@@ -150,9 +153,9 @@ class DisplayedEntry:
         photo = Image.open(self.picturePath)
         aspectRatio = float(photo.size[0])/float(photo.size[1])
         if aspectRatio < 96.0/64.0:
-            photo = photo.resize((int(aspectRatio*96), 64), Image.ANTIALIAS)
+            photo = photo.resize((int(aspectRatio*64), 64), Image.ANTIALIAS)
         else:
-            photo = photo.resize((96, int(64/aspectRatio)), Image.ANTIALIAS)
+            photo = photo.resize((96, int(96/aspectRatio)), Image.ANTIALIAS)
         photo = ImageTk.PhotoImage(photo)
         self.picture = tk.Label(self.entryCanvas, image=photo, width=96, height=64, bg="#000000")
         self.picture.bind("<Button-1>", self.expandImage)
