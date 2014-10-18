@@ -161,6 +161,11 @@ class DisplayedEntry:
         self.displayedData = tk.Listbox(self.entryCanvas)
         self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW)
         
+    def loadData(self, data, keyList):
+        self.displayedData.delete(0, tk.END)
+        for i in keyList:
+            self.displayedData.insert(tk.END, data[i])
+        
     def expandImage(self, event):
         imageRoot = tk.Toplevel()
         imageFrame = ExpandImage(imageRoot, self.picturePath)
@@ -211,7 +216,7 @@ class GUI(tk.Frame):
         menubar.add_cascade(label="Automation", menu=automationMenu)
         
         editMenu = tk.Menu(menubar)
-        editMenu.add_command(label="Console", command=self.Console)
+        editMenu.add_command(label="Console", command=self.console)
         menubar.add_cascade(label="Edit", menu=editMenu)
 
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
@@ -447,14 +452,14 @@ class GUI(tk.Frame):
         self.correctFrame.grid_forget()
         self.incorrectFrame.grid(row=2, column=0, padx=50)
 
-    def Console(self):
+    def console(self):
         exec raw_input("Enter your command:\n>>>")
         """
         consoleUItk = tk.Toplevel()
         consoleUItk.geometry('250x150')
         consoleUI = ConsoleUI(consoleUItk)
         thread.start_new_thread(consoleUI.mainloop, ())
-        """
+        """       
         
     def addEntry(self):
         displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
