@@ -258,34 +258,34 @@ class GUI(tk.Frame):
         self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
         
         #CorrectFrame
-        self.entryFrameCorrect = tk.Frame(self.correctFrame, width=640, height=430,bd=1)
+        self.entryFrameCorrect = tk.Frame(self.correctFrame, width=520, height=430,bd=1)
         self.entryFrameCorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
         self.DataCanvasCorrect=tk.Canvas(self.entryFrameCorrect, background="#D2D2D2", highlightthickness=0)
         self.dataFrameCorrect=tk.Frame(self.DataCanvasCorrect, background="#D2D2D2", borderwidth=1)
-        self.scrollBarCorrect=tk.Scrollbar(self.entryFrameCorrect,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
+        self.scrollBarCorrect=tk.Scrollbar(self.entryFrameCorrect,orient = tk.VERTICAL,command=self.DataCanvasCorrect.yview)
         self.DataCanvasCorrect.configure(yscrollcommand=self.scrollBarCorrect.set)
 
         self.scrollBarCorrect.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasCorrect.pack(side=tk.LEFT)
         self.DataCanvasCorrect.create_window(0, 0, window=self.dataFrameCorrect,anchor=tk.NW)
-        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=510,height=430)
         
         self.dataFrameCorrect.bind("<Configure>", self.configScrollRegion)
         
         # IncorrectFrame
-        self.entryFrameIncorrect = tk.Frame(self.incorrectFrame, width=640, height=430,bd=1)
+        self.entryFrameIncorrect = tk.Frame(self.incorrectFrame, width=520, height=430,bd=1)
         self.entryFrameIncorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
         self.DataCanvasIncorrect=tk.Canvas(self.entryFrameIncorrect, background="#D2D2D2", highlightthickness=0)
         self.dataFrameIncorrect=tk.Frame(self.DataCanvasIncorrect, background="#D2D2D2", borderwidth=1)
-        self.scrollBarIncorrect=tk.Scrollbar(self.entryFrameIncorrect,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
+        self.scrollBarIncorrect=tk.Scrollbar(self.entryFrameIncorrect,orient = tk.VERTICAL,command=self.DataCanvasIncorrect.yview)
         self.DataCanvasIncorrect.configure(yscrollcommand=self.scrollBarIncorrect.set)
 
         self.scrollBarIncorrect.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasIncorrect.pack(side=tk.LEFT)
         self.DataCanvasIncorrect.create_window(0, 0, window=self.dataFrameIncorrect,anchor=tk.NW)
-        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=510,height=430)
         
         self.dataFrameIncorrect.bind("<Configure>", self.configScrollRegion)
         
@@ -318,6 +318,8 @@ class GUI(tk.Frame):
         
     def configScrollRegion(self, event):
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=510,height=430)
 
     def fileI(self):
         global fileDict
