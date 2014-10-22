@@ -172,9 +172,10 @@ class DisplayedEntry:
         imageFrame = ExpandImage(imageRoot, self.picturePath)
         imageRoot.mainloop()
     
-    def __del__(self):
+    def destroy(self):
+        #self.entryCanvas.delete(tk.ALL)
         self.entryCanvas.destroy()
-        self.picture.destroy()
+        del self
         
 
 class GUI(tk.Frame):    
@@ -471,6 +472,7 @@ class GUI(tk.Frame):
         for i in range(len(displayedEntryList)):
             if displayedEntryList[i].uid == uid:
                 indexEntry = i
+                print "indexEntry == "+str(indexEntry)
                 
         if indexEntry == -1:
             return
@@ -479,12 +481,13 @@ class GUI(tk.Frame):
         for i in range(len(displayedAllList)):
             if displayedAllList[i].uid == uid:
                 indexAll = i
+                print "indexAll == "+str(indexAll)
                 
         if indexAll == -1:
             return
             
-        del displayedEntryList[indexEntry]
-        del displayedAllList[indexAll]
+        displayedEntryList[indexEntry].destroy()
+        displayedAllList[indexAll].destroy()
         
     def move(self, uid):
         indexEntry = -1
@@ -506,9 +509,12 @@ class GUI(tk.Frame):
         if displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
             displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), "#F5A9A9", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#F5A9A9")
-            del displayedEntryList[indexEntry]
+            displayedEntryList[indexEntry].destroy()
             
         elif displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
             displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
-            del displayedEntryList[indexEntry]
+            displayedEntryList[indexEntry].destroy()
+            
+        else:
+            print "We dun fukked up"
