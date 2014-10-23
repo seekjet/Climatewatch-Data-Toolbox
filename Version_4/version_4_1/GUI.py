@@ -175,7 +175,8 @@ class DisplayedEntry:
         imageRoot.mainloop()
         
     def move(self):
-        pass
+        #print "Moving uid "+str(self.uid)
+        self.rootFrame.master.master.move(self.uid)
     
     def destroy(self):
         self.entryCanvas.destroy()
