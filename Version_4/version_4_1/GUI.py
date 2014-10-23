@@ -160,7 +160,9 @@ class DisplayedEntry:
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture, anchor=tk.NW)
         self.displayedData = tk.Listbox(self.entryCanvas)
-        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW)
+        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=300)
+        self.moveButton = tk.Button(self.entryCanvas, text="Move", command=self.move)
+        self.entryCanvas.create_window(502, 64, window=self.moveButton, anchor=tk.SE)
         
     def loadData(self, data, keyList):
         self.displayedData.delete(0, tk.END)
@@ -171,9 +173,11 @@ class DisplayedEntry:
         imageRoot = tk.Toplevel()
         imageFrame = ExpandImage(imageRoot, self.picturePath)
         imageRoot.mainloop()
+        
+    def move(self):
+        pass
     
     def destroy(self):
-        #self.entryCanvas.delete(tk.ALL)
         self.entryCanvas.destroy()
         del self
         
