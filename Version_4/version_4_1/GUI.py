@@ -58,9 +58,10 @@ def GlobalVars():
     fileDict={}
 
 class ConsoleUI(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, guiObject):
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        self.guiObject = guiObject
         
         self.parent.title("Console")
         self.config(bg="#F0F0F0")
@@ -85,7 +86,7 @@ class ConsoleUI(tk.Frame):
         self.cancelButton.pack(side=tk.LEFT)
         
     def execute(self):
-        exec self.entryField.get()
+        self.guiObject.execute( self.entryField.get() )
         self.parent.destroy()
         
     def cancel(self):
@@ -224,6 +225,7 @@ class GUI(tk.Frame):
         
         editMenu = tk.Menu(menubar)
         editMenu.add_command(label="Console", command=self.console)
+        editMenu.add_command(label="GUI Console", command=self.guiConsole)
         menubar.add_cascade(label="Edit", menu=editMenu)
 
         self.CurrentOperation = ttk.Label(self, text=CurrentOp)
@@ -231,9 +233,6 @@ class GUI(tk.Frame):
         
         self.tabsFrame = tk.Frame(self)
         self.tabsFrame.grid(row=1, padx=50)
-        
-        #self.SelectedCSV = ttk.Label(self.tabsFrame, text=FileLoc)
-        #self.SelectedCSV.grid(row=0, column=1)
         
         self.displayAllButton = tk.Button(self.tabsFrame, text="All Entries", command=self.showAllEntries)
         self.displayCorrectButton = tk.Button(self.tabsFrame, text="Correct Entries", command=self.showCorrectEntries)
@@ -460,15 +459,19 @@ class GUI(tk.Frame):
         self.allFrame.grid_forget()
         self.correctFrame.grid_forget()
         self.incorrectFrame.grid(row=2, column=0, padx=50)
+        
+    def execute(self, command):
+        # executes a command within the scope of a GUI object
+        exec command
 
     def console(self):
-        exec raw_input("Enter your command:\n>>>")
-        """
+        self.execute( raw_input("Enter your command:\n>>>") )
+        
+    def guiConsole(self):
         consoleUItk = tk.Toplevel()
         consoleUItk.geometry('250x150')
-        consoleUI = ConsoleUI(consoleUItk)
-        thread.start_new_thread(consoleUI.mainloop, ())
-        """       
+        consoleUI = ConsoleUI(consoleUItk, self)
+        consoleUI.mainloop()
         
     def addEntry(self):
         displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
@@ -522,6 +525,3 @@ class GUI(tk.Frame):
             displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
             displayedEntryList[indexEntry].destroy()
-            
-        else:
-            print "We dun fukked up"
