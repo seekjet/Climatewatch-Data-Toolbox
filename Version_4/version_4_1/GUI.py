@@ -232,11 +232,15 @@ class GUI(tk.Frame):
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
         
         self.tabsFrame = tk.Frame(self)
-        self.tabsFrame.grid(row=1, padx=50)
+        self.tabsFrame.grid(row=1, sticky=tk.NE)
         
-        self.displayAllButton = tk.Button(self.tabsFrame, text="All Entries", command=self.showAllEntries)
-        self.displayCorrectButton = tk.Button(self.tabsFrame, text="Correct Entries", command=self.showCorrectEntries)
-        self.displayIncorrectButton = tk.Button(self.tabsFrame, text="Incorrect Entries", command=self.showIncorrectEntries)
+        # Not quite useless. It controls the state of the radiobuttons. However, since we change displays using callbacks, this is its only use.
+        self.useless = tk.StringVar()
+        self.useless.set("all")
+        
+        self.displayAllButton = tk.Radiobutton(self.tabsFrame, text="All Entries", variable=self.useless, value="all", command=self.showAllEntries)
+        self.displayCorrectButton = tk.Radiobutton(self.tabsFrame, text="Correct Entries", variable=self.useless, value="correct", command=self.showCorrectEntries)
+        self.displayIncorrectButton = tk.Radiobutton(self.tabsFrame, text="Incorrect Entries", variable=self.useless, value="incorrect", command=self.showIncorrectEntries)
         self.displayAllButton.pack(side=tk.LEFT)
         self.displayCorrectButton.pack(side=tk.LEFT)
         self.displayIncorrectButton.pack(side=tk.LEFT)
