@@ -56,7 +56,9 @@ class DisplayedEntry:
         self.displayedData.delete(0, tk.END)
         data = self.rootFrame.master.master.fileDict["entries"][str(self.uid)]
         for i in keyList:
-            self.displayedData.insert(tk.END, "<b>" + str(i) + ": </b>" + str(data[i]))
+            # So basically if there is a field that is in the form __fieldName__, it is for us, and not part of the official data.
+            if (i[0] + i[1] != "__") or (i[len(i)-1] + i[len(i)-1] != "__"):
+                self.displayedData.insert(tk.END, str(i) + ": " + str(data[i]))
         
     def expandImage(self, event):
         imageRoot = tk.Toplevel()

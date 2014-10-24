@@ -346,8 +346,23 @@ class GUI(tk.Frame):
         consoleUI.mainloop()
         
     def addEntry(self, uid):
-        self.displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(self.displayedEntryList), "#81F781", uid))
-        self.displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(self.displayedAllList), "#81F781", uid))
+        try:
+            if self.fileDict["entries"][str(uid)]["__isCorrect__"] == "yes":
+                isCorrect = True
+            else:
+                isCorrect = False
+        except KeyError:
+            print "Warning! Potentially incorrectly generated JSON file!"
+            self.fileDict["entries"][str(uid)]["__isCorrect__"] = "yes"
+            isCorrect = True
+            
+        if isCorrect:
+            self.displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(self.displayedEntryList), "#81F781", uid))
+            self.displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(self.displayedAllList), "#81F781", uid))
+            
+        else:
+            self.displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(self.displayedEntryList), "#F5A9A9", uid))
+            self.displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(self.displayedAllList), "#F5A9A9", uid))
     
     def deleteEntry(self, uid):
         indexEntry = -1
@@ -387,6 +402,11 @@ class GUI(tk.Frame):
                 
         if indexAll == -1:
             return
+            
+        if self.fileDict["entries"][str(uid)]["__isCorrect__"] == "yes":
+            self.fileDict["entries"][str(uid)]["__isCorrect__"] = "no"
+        elif self.fileDict["entries"][str(uid)]["__isCorrect__"] == "no":
+            self.fileDict["entries"][str(uid)]["__isCorrect__"] = "yes"
             
         if self.displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
             self.displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(self.displayedEntryList), "#F5A9A9", self.displayedEntryList[indexEntry].uid))
