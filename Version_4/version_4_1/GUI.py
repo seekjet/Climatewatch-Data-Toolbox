@@ -23,9 +23,6 @@ Entry = 0
 Action = ""
 Stop = 0
 End=0
-displayedEntryList = []
-displayedAllList = []
-fileDict = {}
 
 def escape(x):
     res = ""
@@ -46,10 +43,13 @@ class GUI(tk.Frame):
     def __init__(self, parent):
         print ""
         print "GUI thread created"
+        self.fileDict = {}
+        self.displayedEntryList = []
+        self.displayedAllList = []
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
-        # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ingores the line completely...
+        # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ignores the line completely...
         self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onClose)
         self.Init()
 
@@ -187,33 +187,29 @@ class GUI(tk.Frame):
         self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=612,height=430)
 
     def fileI(self):
-        global fileDict
-        fileDict = functionBase.readFile('import')
+        self.fileDict = functionBase.readFile('import')
         self.fileMenu.entryconfig("Save", state=tk.NORMAL)
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
-        #print fileDict['details']['totEntries']
         
     def fileL(self):
-        global fileDict
-        fileDict = functionBase.readFile('load')
+        self.fileDict = functionBase.readFile('load')
         self.fileMenu.entryconfig("Save", state=tk.NORMAL)
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
-        #print fileDict['details']['totEntries']
 
     def fileSA(self):
-        fileDict['details']['saveLocation']=functionBase.writeFile('saveAs',fileDict)
-        functionBase.writeFile('save',fileDict)
+        self.fileDict['details']['saveLocation']=functionBase.writeFile('saveAs', self.fileDict)
+        functionBase.writeFile('save', self.fileDict)
         self.fileMenu.entryconfig("Save", state=tk.DISABLED)
         self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
         self.fileMenu.entryconfig("Load", state=tk.NORMAL)
         self.fileMenu.entryconfig("Import", state=tk.NORMAL)
 
     def fileS(self):
-        functionBase.writeFile('save',fileDict)
+        functionBase.writeFile('save', self.fileDict)
         self.fileMenu.entryconfig("Save", state=tk.DISABLED)
         self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
         self.fileMenu.entryconfig("Load", state=tk.NORMAL)
@@ -349,14 +345,14 @@ class GUI(tk.Frame):
         consoleUI = ConsoleUI(consoleUItk, self)
         consoleUI.mainloop()
         
-    def addEntry(self):
-        displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", len(displayedEntryList)))
-        displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(displayedAllList), "#81F781", len(displayedAllList)))
+    def addEntry(self, uid):
+        self.displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(self.displayedEntryList), "#81F781", uid))
+        self.displayedAllList.append(DisplayedEntry(self.DataCanvasAll, self.entryFrameAll, self.dataFrameAll, len(self.displayedAllList), "#81F781", uid))
     
     def deleteEntry(self, uid):
         indexEntry = -1
-        for i in range(len(displayedEntryList)):
-            if displayedEntryList[i].uid == uid:
+        for i in range(len(self.displayedEntryList)):
+            if self.displayedEntryList[i].uid == uid:
                 indexEntry = i
                 print "indexEntry == "+str(indexEntry)
                 
@@ -364,43 +360,43 @@ class GUI(tk.Frame):
             return
             
         indexAll = -1
-        for i in range(len(displayedAllList)):
-            if displayedAllList[i].uid == uid:
+        for i in range(len(self.displayedAllList)):
+            if self.displayedAllList[i].uid == uid:
                 indexAll = i
                 print "indexAll == "+str(indexAll)
                 
         if indexAll == -1:
             return
             
-        displayedEntryList[indexEntry].destroy()
-        displayedAllList[indexAll].destroy()
+        self.displayedEntryList[indexEntry].destroy()
+        self.displayedAllList[indexAll].destroy()
         
     def move(self, uid):
         indexEntry = -1
-        for i in range(len(displayedEntryList)):
-            if displayedEntryList[i].uid == uid:
+        for i in range(len(self.displayedEntryList)):
+            if self.displayedEntryList[i].uid == uid:
                 indexEntry = i
                 
         if indexEntry == -1:
             return
             
         indexAll = -1
-        for i in range(len(displayedAllList)):
-            if displayedAllList[i].uid == uid:
+        for i in range(len(self.displayedAllList)):
+            if self.displayedAllList[i].uid == uid:
                 indexAll = i
                 
         if indexAll == -1:
             return
             
-        if displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
-            displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(displayedEntryList), "#F5A9A9", displayedEntryList[indexEntry].uid))
-            displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#F5A9A9")
-            displayedEntryList[indexEntry].destroy()
+        if self.displayedEntryList[indexEntry].rootFrame == self.entryFrameCorrect:
+            self.displayedEntryList.append(DisplayedEntry(self.DataCanvasIncorrect, self.entryFrameIncorrect, self.dataFrameIncorrect, len(self.displayedEntryList), "#F5A9A9", self.displayedEntryList[indexEntry].uid))
+            self.displayedAllList[indexAll].entryCanvas.itemconfigure(self.displayedAllList[indexAll].flagRect, fill="#F5A9A9")
+            self.displayedEntryList[indexEntry].destroy()
             
-        elif displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
-            displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
-            displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
-            displayedEntryList[indexEntry].destroy()
+        elif self.displayedEntryList[indexEntry].rootFrame == self.entryFrameIncorrect:
+            self.displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(self.displayedEntryList), "#81F781", self.displayedEntryList[indexEntry].uid))
+            self.displayedAllList[indexAll].entryCanvas.itemconfigure(self.displayedAllList[indexAll].flagRect, fill="#81F781")
+            self.displayedEntryList[indexEntry].destroy()
             
     def onClose(self):
         confirm = raw_input("Are you sure?")

@@ -46,14 +46,17 @@ class DisplayedEntry:
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture, anchor=tk.NW)
         self.displayedData = tk.Listbox(self.entryCanvas)
-        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=self.width-210)
+        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=self.width-210, height=66)
         self.moveButton = tk.Button(self.entryCanvas, text="Move", command=self.move)
         self.entryCanvas.create_window(self.width-8, 64, window=self.moveButton, anchor=tk.SE)
         
-    def loadData(self, data, keyList):
+        self.updateData(self.rootFrame.master.master.fileDict["entries"][str(self.uid)].keys())
+        
+    def updateData(self, keyList):
         self.displayedData.delete(0, tk.END)
+        data = self.rootFrame.master.master.fileDict["entries"][str(self.uid)]
         for i in keyList:
-            self.displayedData.insert(tk.END, data[i])
+            self.displayedData.insert(tk.END, "<b>" + str(i) + ": </b>" + str(data[i]))
         
     def expandImage(self, event):
         imageRoot = tk.Toplevel()
@@ -61,7 +64,6 @@ class DisplayedEntry:
         imageRoot.mainloop()
         
     def move(self):
-        #print "Moving uid "+str(self.uid)
         self.rootFrame.master.master.move(self.uid)
     
     def destroy(self):
