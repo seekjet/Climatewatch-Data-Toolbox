@@ -140,9 +140,10 @@ class DisplayedEntry:
         self.rootFrame = rootFrame
         self.innerFrame = innerFrame
         self.uid = uid
-        self.entryCanvas = tk.Canvas(self.innerFrame, height=64, width=502)
+        self.width = int(self.rootCanvas.cget("width"))
+        self.entryCanvas = tk.Canvas(self.innerFrame, height=64, width=self.width-8)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
-        self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=510,height=430)
+        self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=self.width,height=430)
         self.picturePath = "resources/default.png"
         
         self.drawItems(flagcolor)
@@ -161,9 +162,9 @@ class DisplayedEntry:
         self.picture.photo = photo
         self.entryCanvas.create_window(20, 0, window=self.picture, anchor=tk.NW)
         self.displayedData = tk.Listbox(self.entryCanvas)
-        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=300)
+        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=self.width-210)
         self.moveButton = tk.Button(self.entryCanvas, text="Move", command=self.move)
-        self.entryCanvas.create_window(502, 64, window=self.moveButton, anchor=tk.SE)
+        self.entryCanvas.create_window(self.width-8, 64, window=self.moveButton, anchor=tk.SE)
         
     def loadData(self, data, keyList):
         self.displayedData.delete(0, tk.END)
@@ -250,10 +251,10 @@ class GUI(tk.Frame):
         self.allFrame = tk.Frame(self)
         
         # AllFrame
-        self.entryFrameAll = tk.Frame(self.allFrame, width=520, height=430,bd=1)
+        self.entryFrameAll = tk.Frame(self.allFrame, width=520, height=430, bd=1)
         self.entryFrameAll.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
-        self.DataCanvasAll=tk.Canvas(self.entryFrameAll, background="#D2D2D2", highlightthickness=0)
+        self.DataCanvasAll=tk.Canvas(self.entryFrameAll, background="#D2D2D2", highlightthickness=0,)
         self.dataFrameAll=tk.Frame(self.DataCanvasAll, background="#D2D2D2", borderwidth=1)
         self.scrollBarAll=tk.Scrollbar(self.entryFrameAll,orient = tk.VERTICAL,command=self.DataCanvasAll.yview)
         self.DataCanvasAll.configure(yscrollcommand=self.scrollBarAll.set)
@@ -266,10 +267,10 @@ class GUI(tk.Frame):
         self.dataFrameAll.bind("<Configure>", self.configScrollRegion)
         
         #CorrectFrame
-        self.entryFrameCorrect = tk.Frame(self.correctFrame, width=520, height=430,bd=1)
+        self.entryFrameCorrect = tk.Frame(self.correctFrame, width=612, height=430, bd=1)
         self.entryFrameCorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
-        self.DataCanvasCorrect=tk.Canvas(self.entryFrameCorrect, background="#D2D2D2", highlightthickness=0)
+        self.DataCanvasCorrect=tk.Canvas(self.entryFrameCorrect, background="#D2D2D2", highlightthickness=0, width=612, height=430)
         self.dataFrameCorrect=tk.Frame(self.DataCanvasCorrect, background="#D2D2D2", borderwidth=1)
         self.scrollBarCorrect=tk.Scrollbar(self.entryFrameCorrect,orient = tk.VERTICAL,command=self.DataCanvasCorrect.yview)
         self.DataCanvasCorrect.configure(yscrollcommand=self.scrollBarCorrect.set)
@@ -277,15 +278,15 @@ class GUI(tk.Frame):
         self.scrollBarCorrect.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasCorrect.pack(side=tk.LEFT)
         self.DataCanvasCorrect.create_window(0, 0, window=self.dataFrameCorrect,anchor=tk.NW)
-        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=612,height=430)
         
         self.dataFrameCorrect.bind("<Configure>", self.configScrollRegion)
         
         # IncorrectFrame
-        self.entryFrameIncorrect = tk.Frame(self.incorrectFrame, width=520, height=430,bd=1)
+        self.entryFrameIncorrect = tk.Frame(self.incorrectFrame, width=612, height=430,bd=1)
         self.entryFrameIncorrect.grid(column=1, row=0, sticky=tk.NW, columnspan=405, padx=4, pady=0)
         
-        self.DataCanvasIncorrect=tk.Canvas(self.entryFrameIncorrect, background="#D2D2D2", highlightthickness=0)
+        self.DataCanvasIncorrect=tk.Canvas(self.entryFrameIncorrect, background="#D2D2D2", highlightthickness=0, height=612, width=430)
         self.dataFrameIncorrect=tk.Frame(self.DataCanvasIncorrect, background="#D2D2D2", borderwidth=1)
         self.scrollBarIncorrect=tk.Scrollbar(self.entryFrameIncorrect,orient = tk.VERTICAL,command=self.DataCanvasIncorrect.yview)
         self.DataCanvasIncorrect.configure(yscrollcommand=self.scrollBarIncorrect.set)
@@ -293,7 +294,7 @@ class GUI(tk.Frame):
         self.scrollBarIncorrect.pack(side=tk.RIGHT,fill=tk.Y)
         self.DataCanvasIncorrect.pack(side=tk.LEFT)
         self.DataCanvasIncorrect.create_window(0, 0, window=self.dataFrameIncorrect,anchor=tk.NW)
-        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=612,height=430)
         
         self.dataFrameIncorrect.bind("<Configure>", self.configScrollRegion)
         
@@ -326,8 +327,8 @@ class GUI(tk.Frame):
         
     def configScrollRegion(self, event):
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
-        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=510,height=430)
-        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=510,height=430)
+        self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=612,height=430)
+        self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=612,height=430)
 
     def fileI(self):
         global fileDict
@@ -457,12 +458,12 @@ class GUI(tk.Frame):
     def showCorrectEntries(self):
         self.allFrame.grid_forget()
         self.incorrectFrame.grid_forget()
-        self.correctFrame.grid(row=2, column=0, padx=50)
+        self.correctFrame.grid(row=2, column=0)
         
     def showIncorrectEntries(self):
         self.allFrame.grid_forget()
         self.correctFrame.grid_forget()
-        self.incorrectFrame.grid(row=2, column=0, padx=50)
+        self.incorrectFrame.grid(row=2, column=0)
         
     def execute(self, command):
         # executes a command within the scope of a GUI object
