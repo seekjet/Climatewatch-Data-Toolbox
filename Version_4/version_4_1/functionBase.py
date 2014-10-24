@@ -65,7 +65,7 @@ def readFile(flag):
             x=loadJSON(fileLocation)
             return x
 
-def writeFile(flag,fileDict):
+def writeFile(flag, fileDict):
     if flag=='saveAs':
         fileLocation=tkFileDialog.asksaveasfilename(filetypes=[('JSON Files','*.json')],initialfile=(fileDict['details']['fileName']))
         if fileLocation != "":
@@ -82,4 +82,4 @@ def writeFile(flag,fileDict):
             json.dump(fileDict,target,indent=4,separators=(',',':'))
         except KeyError:
             #popup of you need to save as first
-            print "no previous save location found"
+            writeFile('saveAs', fileDict)

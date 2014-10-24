@@ -7,6 +7,7 @@ import Tkinter as tk
 import thread
 import time
 import tkFileDialog
+import tkMessageBox
 
 # The code we actually wrote...
 import functionBase
@@ -48,6 +49,8 @@ class GUI(tk.Frame):
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
+        # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ingores the line completely...
+        self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onClose)
         self.Init()
 
     def Init(self):
@@ -57,30 +60,30 @@ class GUI(tk.Frame):
         self.config(bg='#F0F0F0')
         self.pack(fill = tk.BOTH, expand = 1)
         
-        menubar = tk.Menu(self)
-        self.parent.config(menu=menubar)
+        self.menubar = tk.Menu(self)
+        self.parent.config(menu=self.menubar)
         
-        fileMenu = tk.Menu(menubar)
-        fileMenu.add_command(label="Import",command=self.fileI)
-        fileMenu.add_command(label="Load",command=self.fileL)
-        fileMenu.add_command(label="Save",command=self.fileS)
-        fileMenu.add_command(label="Save As",command=self.fileSA)
-        fileMenu.add_command(label="Export As")
-        menubar.add_cascade(label="File", menu=fileMenu)
+        self.fileMenu = tk.Menu(self.menubar)
+        self.fileMenu.add_command(label="Import", command=self.fileI)
+        self.fileMenu.add_command(label="Load", command=self.fileL)
+        self.fileMenu.add_command(label="Save", command=self.fileS, state=tk.DISABLED)
+        self.fileMenu.add_command(label="Save As", command=self.fileSA, state=tk.DISABLED)
+        self.fileMenu.add_command(label="Export As")
+        self.menubar.add_cascade(label="File", menu=self.fileMenu)
         
-        viewMenu = tk.Menu(menubar)
-        menubar.add_cascade(label="View", menu=viewMenu)
+        self.viewMenu = tk.Menu(self.menubar)
+        self.menubar.add_cascade(label="View", menu=self.viewMenu)
         
-        filtersMenu = tk.Menu(menubar)
-        menubar.add_cascade(label="Filters", menu=filtersMenu)
+        self.filtersMenu = tk.Menu(self.menubar)
+        self.menubar.add_cascade(label="Filters", menu=self.filtersMenu)
         
-        automationMenu = tk.Menu(menubar)
-        menubar.add_cascade(label="Automation", menu=automationMenu)
+        self.automationMenu = tk.Menu(self.menubar)
+        self.menubar.add_cascade(label="Automation", menu=self.automationMenu)
         
-        editMenu = tk.Menu(menubar)
-        editMenu.add_command(label="Console", command=self.console)
-        editMenu.add_command(label="GUI Console", command=self.guiConsole)
-        menubar.add_cascade(label="Edit", menu=editMenu)
+        self.editMenu = tk.Menu(self.menubar)
+        self.editMenu.add_command(label="Console", command=self.console)
+        self.editMenu.add_command(label="GUI Console", command=self.guiConsole)
+        self.menubar.add_cascade(label="Edit", menu=self.editMenu)
 
         self.CurrentOperation = tk.Label(self, text=CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
@@ -186,20 +189,35 @@ class GUI(tk.Frame):
     def fileI(self):
         global fileDict
         fileDict = functionBase.readFile('import')
+        self.fileMenu.entryconfig("Save", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Load", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         #print fileDict['details']['totEntries']
         
     def fileL(self):
         global fileDict
         fileDict = functionBase.readFile('load')
+        self.fileMenu.entryconfig("Save", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Load", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         #print fileDict['details']['totEntries']
 
     def fileSA(self):
         fileDict['details']['saveLocation']=functionBase.writeFile('saveAs',fileDict)
+        functionBase.writeFile('save',fileDict)
+        self.fileMenu.entryconfig("Save", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Load", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Import", state=tk.NORMAL)
 
     def fileS(self):
         functionBase.writeFile('save',fileDict)
-        
-       
+        self.fileMenu.entryconfig("Save", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Load", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Import", state=tk.NORMAL)
 
     def PBStart(self):
         self.ProgressBar["value"] = 0
@@ -383,3 +401,8 @@ class GUI(tk.Frame):
             displayedEntryList.append(DisplayedEntry(self.DataCanvasCorrect, self.entryFrameCorrect, self.dataFrameCorrect, len(displayedEntryList), "#81F781", displayedEntryList[indexEntry].uid))
             displayedAllList[indexAll].entryCanvas.itemconfigure(displayedAllList[indexAll].flagRect, fill="#81F781")
             displayedEntryList[indexEntry].destroy()
+            
+    def onClose(self):
+        confirm = raw_input("Are you sure?")
+        if "y" in confirm.lower():
+            self.parent.destroy()
