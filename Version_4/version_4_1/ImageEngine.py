@@ -28,23 +28,6 @@ if "windows" in SYS_PLATFORM.lower():
 else:
     file_delimeter = "/"
 
-def GlobalVars():
-    global PBPercentage
-    PBPercentage = 0
-    global FileLoc
-    FileLoc="No CSV File Selected"
-    global CurrentOp
-    CurrentOp="Idle"
-    global Entries
-    Entries = 0
-    global Entry
-    Entry = 0
-    global Action
-    Action = ""
-    global Stop
-    Stop = 0
-    global End
-    End=0
 
 def Engine():
 

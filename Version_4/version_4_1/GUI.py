@@ -7,9 +7,11 @@ import Tkinter as tk
 import thread
 import time
 import tkFileDialog
-from PIL import Image, ImageTk
 
+# The code we actually wrote...
 import functionBase
+from DisplayedEntry import DisplayedEntry
+from ConsoleUI import ConsoleUI
 
 # Global vars
 PBPercentage = 0
@@ -22,6 +24,7 @@ Stop = 0
 End=0
 displayedEntryList = []
 displayedAllList = []
+fileDict = {}
 
 def escape(x):
     res = ""
@@ -36,158 +39,10 @@ if "windows" in SYS_PLATFORM.lower():
     file_delimeter = "\\"
 else:
     file_delimeter = "/"
-
-def GlobalVars():
-    global PBPercentage
-    PBPercentage = 0
-    global FileLoc
-    FileLoc="No CSV File Selected"
-    global CurrentOp
-    CurrentOp="Idle"
-    global Entries
-    Entries = 0
-    global Entry
-    Entry = 0
-    global Action
-    Action = ""
-    global Stop
-    Stop = 0
-    global End
-    End=0
-    global fileDict
-    fileDict={}
-
-class ConsoleUI(tk.Frame):
-    def __init__(self, parent, guiObject):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
-        self.guiObject = guiObject
-        
-        self.parent.title("Console")
-        self.config(bg="#F0F0F0")
-        self.instruction = tk.Label(self.parent, text="Enter your command (python code):")
-        self.instruction.pack()
-        
-        self.filler1 = tk.Label(self.parent, text="")
-        self.filler1.pack()
-        
-        self.entryField = tk.Entry(self.parent)
-        self.entryField.pack()
-        
-        self.filler2 = tk.Label(self.parent, text="")
-        self.filler2.pack()
-        
-        self.buttonFrame = tk.Frame(self.parent)
-        self.buttonFrame.pack()
-        
-        self.okButton = tk.Button(self.buttonFrame, text="Execute", command=self.execute)
-        self.cancelButton = tk.Button(self.buttonFrame, text="Cancel", command=self.cancel)
-        self.okButton.pack(side=tk.LEFT)
-        self.cancelButton.pack(side=tk.LEFT)
-        
-    def execute(self):
-        self.guiObject.execute( self.entryField.get() )
-        self.parent.destroy()
-        
-    def cancel(self):
-        self.parent.destroy()
-        
-class ExpandImage(tk.Frame):
-    def __init__(self, parent, picturePath):
-        tk.Frame.__init__(self, parent)
-        self.parent = parent
-        self.height = self.winfo_reqheight()
-        self.width = self.winfo_reqwidth()
-        self.parent.title("Climatewatch Data Toolbox - "+self.stripFileName(picturePath))
-        
-        self.picturePath = picturePath
-        self.original = Image.open(self.picturePath)
-        self.aspectRatio = float(self.original.size[0])/float(self.original.size[1])
-        photo = ImageTk.PhotoImage(self.original)
-        self.image = tk.Label(self, image=photo, bg="#000000")
-        self.image.photo = photo
-        self.image.pack(fill = tk.BOTH, expand = True)
-        self.pack(fill = tk.BOTH, expand = True)
-        
-        self.image.bind("<Configure>", self.updateDimens)
-        
-    def updateDimens(self, event):
-        self.parent.geometry(str(event.width)+"x"+str(event.height))
-        if self.aspectRatio < float(event.width)/float(event.height):
-            photo = ImageTk.PhotoImage(self.original.resize((int(event.height*self.aspectRatio), event.height)))
-        else:
-            photo = ImageTk.PhotoImage(self.original.resize((event.width, int(event.width/self.aspectRatio))))
-        self.image.config(image=photo)
-        self.image.photo = photo
-        
-    def stripFileName(self, fileName):
-        temp = ""
-        for i in reversed(fileName):
-            if i == file_delimeter:
-                break
-            else:
-                temp = i + temp
-        return temp
-        
-    def __del__(self):
-        self.image.destroy()
-        
-        
-class DisplayedEntry:
-    def __init__(self, rootCanvas, rootFrame, innerFrame, row, flagcolor, uid):
-        self.rootCanvas = rootCanvas
-        self.row = row
-        self.rootFrame = rootFrame
-        self.innerFrame = innerFrame
-        self.uid = uid
-        self.width = int(self.rootCanvas.cget("width"))
-        self.entryCanvas = tk.Canvas(self.innerFrame, height=64, width=self.width-8)
-        self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
-        self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=self.width,height=430)
-        self.picturePath = "resources/default.png"
-        
-        self.drawItems(flagcolor)
-        
-    def drawItems(self, flagcolor):
-        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=flagcolor, outline="#D9D9D9")
-        photo = Image.open(self.picturePath)
-        aspectRatio = float(photo.size[0])/float(photo.size[1])
-        if aspectRatio < 96.0/64.0:
-            photo = photo.resize((int(aspectRatio*64), 64), Image.ANTIALIAS)
-        else:
-            photo = photo.resize((96, int(96/aspectRatio)), Image.ANTIALIAS)
-        photo = ImageTk.PhotoImage(photo)
-        self.picture = tk.Label(self.entryCanvas, image=photo, width=96, height=64, bg="#000000")
-        self.picture.bind("<Button-1>", self.expandImage)
-        self.picture.photo = photo
-        self.entryCanvas.create_window(20, 0, window=self.picture, anchor=tk.NW)
-        self.displayedData = tk.Listbox(self.entryCanvas)
-        self.entryCanvas.create_window(120, 0, window=self.displayedData, anchor=tk.NW, width=self.width-210)
-        self.moveButton = tk.Button(self.entryCanvas, text="Move", command=self.move)
-        self.entryCanvas.create_window(self.width-8, 64, window=self.moveButton, anchor=tk.SE)
-        
-    def loadData(self, data, keyList):
-        self.displayedData.delete(0, tk.END)
-        for i in keyList:
-            self.displayedData.insert(tk.END, data[i])
-        
-    def expandImage(self, event):
-        imageRoot = tk.Toplevel()
-        imageFrame = ExpandImage(imageRoot, self.picturePath)
-        imageRoot.mainloop()
-        
-    def move(self):
-        #print "Moving uid "+str(self.uid)
-        self.rootFrame.master.master.move(self.uid)
-    
-    def destroy(self):
-        self.entryCanvas.destroy()
-        del self
         
 
 class GUI(tk.Frame):    
     def __init__(self, parent):
-        GlobalVars()
         print ""
         print "GUI thread created"
         
@@ -197,8 +52,6 @@ class GUI(tk.Frame):
 
     def Init(self):
         value_progress = 300
-        
-        # self.menuFrame = ttk.Frame(self)
 
         self.parent.title("Climatewatch Data Toolbox")
         self.config(bg='#F0F0F0')
@@ -229,7 +82,7 @@ class GUI(tk.Frame):
         editMenu.add_command(label="GUI Console", command=self.guiConsole)
         menubar.add_cascade(label="Edit", menu=editMenu)
 
-        self.CurrentOperation = ttk.Label(self, text=CurrentOp)
+        self.CurrentOperation = tk.Label(self, text=CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
         
         self.tabsFrame = tk.Frame(self)
