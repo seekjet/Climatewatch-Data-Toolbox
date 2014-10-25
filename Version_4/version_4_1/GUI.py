@@ -8,6 +8,7 @@ import thread
 import time
 import tkFileDialog
 import tkMessageBox
+import json
 
 # The code we actually wrote...
 import functionBase
@@ -51,6 +52,19 @@ class GUI(tk.Frame):
         self.parent = parent
         # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ignores the line completely...
         self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onClose)
+        
+        # Load global config settings
+        try:
+            fp = open("resources/global_config.json", "r")
+            self.global_config = json.load(fp)
+            fp.close()
+        except IOError:
+            fp = open("resources/global_config.json", "w")
+            # Any permanent options go in tis dictionary
+            self.global_config = {"displayedEntries":30}
+            json.dump(self.global_config, fp)
+            fp.close()
+        
         self.Init()
 
     def Init(self):
@@ -163,9 +177,16 @@ class GUI(tk.Frame):
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
         
         self.allFrame.grid(row=2, column=0)
+        
+        self.prevButton = tk.Button(self.allFrame, text="Prev", command=self.loadPrev, height=1)
+        self.nextButton = tk.Button(self.allFrame, text="Next", command=self.loadNext, height=1)
+        self.pageLabel = tk.Label(self.allFrame, text="Page ?/?")
+        self.prevButton.grid(row=1, column=1, padx=10)
+        self.pageLabel.grid(row=1, column=2, padx=165)
+        self.nextButton.grid(row=1, column=3, padx=10)
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5, highlightthickness=0)
-        canvas.grid(column=0,row=999,sticky=tk.NW,columnspan=200)
+        canvas.grid(column=0, row=999, sticky=tk.NW, columnspan=200)
 
 
         # WATCH OUT FOR PLACEMENT HERE
@@ -317,6 +338,12 @@ class GUI(tk.Frame):
             self.DeselectCSV["state"]=tk.ACTIVE
             CurrentOp="Idle"
             
+    def loadPrev(self):
+        pass
+        
+    def loadNext(self):
+        pass
+    
     def showAllEntries(self):
         self.correctFrame.grid_forget()
         self.incorrectFrame.grid_forget()

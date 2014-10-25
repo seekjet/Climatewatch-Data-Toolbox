@@ -49,6 +49,7 @@ def importFile(fileLocation):
 def loadJSON(fileLocation):
     f = open(fileLocation,'r')
     fileDict=json.load(f)
+    f.close()
     #print fileDict['details']['fileName']
     return fileDict
 
