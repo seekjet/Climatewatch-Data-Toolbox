@@ -104,6 +104,15 @@ class GUI(tk.Frame):
         
         self.tabsFrame = tk.Frame(self)
         self.tabsFrame.grid(row=1, sticky=tk.NE)
+        self.partsFrame = tk.Frame(self)
+        self.partsFrame.grid(row=1, sticky=tk.W)
+        
+        self.prevButton = tk.Button(self.partsFrame, text="Prev")
+        self.nextButton = tk.Button(self.partsFrame, text="Next")
+        self.partLabel = tk.Label(self.partsFrame, text="Part ?/?")
+        self.prevButton.pack(side=tk.LEFT)
+        self.partLabel.pack(side=tk.LEFT)
+        self.nextButton.pack(side=tk.LEFT)
         
         # Not quite useless. It controls the state of the radiobuttons. However, since we change displays using callbacks, this is its only use.
         self.useless = tk.StringVar()
