@@ -47,6 +47,7 @@ class GUI(tk.Frame):
         self.fileDict = {}
         self.displayedEntryList = []
         self.displayedAllList = []
+        self.pageNum = 0
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
@@ -60,7 +61,7 @@ class GUI(tk.Frame):
             fp.close()
         except IOError:
             fp = open("resources/global_config.json", "w")
-            # Any permanent options go in tis dictionary
+            # Any permanent options go in this dictionary
             self.global_config = {"displayedEntries":30}
             json.dump(self.global_config, fp)
             fp.close()
@@ -106,10 +107,9 @@ class GUI(tk.Frame):
         self.tabsFrame.grid(row=1, sticky=tk.NE)
         self.partsFrame = tk.Frame(self, height=21, width=180)
         self.partsFrame.pack_propagate(False)
-        self.partsFrame.grid(row=1, sticky=tk.W)
         
-        self.prevButton = tk.Button(self.partsFrame, text="Prev")
-        self.nextButton = tk.Button(self.partsFrame, text="Next")
+        self.prevButton = tk.Button(self.partsFrame, text="Prev", command=self.loadPrev)
+        self.nextButton = tk.Button(self.partsFrame, text="Next", command=self.loadNext)
         self.partLabel = tk.Label(self.partsFrame, text="Part ?/?")
         self.prevButton.pack(side=tk.LEFT, padx=5)
         self.partLabel.pack(side=tk.LEFT)
@@ -209,6 +209,15 @@ class GUI(tk.Frame):
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
         self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=612,height=430)
         self.DataCanvasIncorrect.configure(scrollregion=self.DataCanvasIncorrect.bbox(tk.ALL),width=612,height=430)
+        
+    def pageNumUpdate(self):
+        self.prevButton.config(state=tk.NORMAL)
+        self.nextButton.config(state=tk.NORMAL)
+        if self.pageNum < 2:
+            self.prevButton.config(state=tk.DISABLED)
+        elif self.pageNum >= int(self.fileDict["details"]["totEntries"]/float(self.global_config["displayedEntries"])+1):
+            self.nextButton.config(state=tk.DISABLED)
+        self.partLabel.config(text = "Part "+str(self.pageNum)+"/"+str(int(self.fileDict["details"]["totEntries"]/float(self.global_config["displayedEntries"]))+1))
 
     def fileI(self):
         self.fileDict = functionBase.readFile('import')
@@ -223,21 +232,17 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
+        self.pageNum = 1
+        self.pageNumUpdate()
+        self.partsFrame.grid(row=1, sticky=tk.W)
+        
 
     def fileSA(self):
         self.fileDict['details']['saveLocation']=functionBase.writeFile('saveAs', self.fileDict)
         functionBase.writeFile('save', self.fileDict)
-        self.fileMenu.entryconfig("Save", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Load", state=tk.NORMAL)
-        self.fileMenu.entryconfig("Import", state=tk.NORMAL)
 
     def fileS(self):
         functionBase.writeFile('save', self.fileDict)
-        self.fileMenu.entryconfig("Save", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Load", state=tk.NORMAL)
-        self.fileMenu.entryconfig("Import", state=tk.NORMAL)
 
     def PBStart(self):
         self.ProgressBar["value"] = 0
@@ -442,7 +447,31 @@ class GUI(tk.Frame):
             self.displayedAllList[indexAll].entryCanvas.itemconfigure(self.displayedAllList[indexAll].flagRect, fill="#81F781")
             self.displayedEntryList[indexEntry].destroy()
             
+    def loadNext(self):
+        for i in self.displayedAllList:
+            i.destroy()
+        for i in self.displayedEntryList:
+            i.destroy()
+        for i in range( (self.pageNum-1)*self.global_config["displayedEntries"], self.pageNum*self.global_config["displayedEntries"] ):
+            try:
+                self.addEntry(i)
+            except KeyError:
+                break
+        self.pageNum += 1
+        self.pageNumUpdate()
+        
+    def loadPrev(self):
+        for i in self.displayedAllList:
+            i.destroy()
+        for i in self.displayedEntryList:
+            i.destroy()
+        for i in range( (self.pageNum-1)*self.global_config["displayedEntries"], self.pageNum*self.global_config["displayedEntries"] ):
+            try:
+                self.addEntry(i)
+            except KeyError:
+                break
+        self.pageNum -= 1
+        self.pageNumUpdate()
+    
     def onClose(self):
-        confirm = raw_input("Are you sure?")
-        if "y" in confirm.lower():
-            self.parent.destroy()
+        self.parent.destroy()
