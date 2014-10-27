@@ -65,9 +65,9 @@ class GUI(tk.Frame):
             json.dump(self.global_config, fp)
             fp.close()
         
-        self.Init()
+        self.loadUI()
 
-    def Init(self):
+    def loadUI(self):
         value_progress = 300
 
         self.parent.title("Climatewatch Data Toolbox")
@@ -104,15 +104,16 @@ class GUI(tk.Frame):
         
         self.tabsFrame = tk.Frame(self)
         self.tabsFrame.grid(row=1, sticky=tk.NE)
-        self.partsFrame = tk.Frame(self)
+        self.partsFrame = tk.Frame(self, height=21, width=180)
+        self.partsFrame.pack_propagate(False)
         self.partsFrame.grid(row=1, sticky=tk.W)
         
         self.prevButton = tk.Button(self.partsFrame, text="Prev")
         self.nextButton = tk.Button(self.partsFrame, text="Next")
         self.partLabel = tk.Label(self.partsFrame, text="Part ?/?")
-        self.prevButton.pack(side=tk.LEFT)
+        self.prevButton.pack(side=tk.LEFT, padx=5)
         self.partLabel.pack(side=tk.LEFT)
-        self.nextButton.pack(side=tk.LEFT)
+        self.nextButton.pack(side=tk.LEFT, padx=5)
         
         # Not quite useless. It controls the state of the radiobuttons. However, since we change displays using callbacks, this is its only use.
         self.useless = tk.StringVar()
