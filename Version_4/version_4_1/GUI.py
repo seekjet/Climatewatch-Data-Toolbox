@@ -14,6 +14,7 @@ import json
 import functionBase
 from DisplayedEntry import DisplayedEntry
 from ConsoleUI import ConsoleUI
+from AskSave import AskSave
 
 # Global vars
 PBPercentage = 0
@@ -48,6 +49,7 @@ class GUI(tk.Frame):
         self.displayedEntryList = []
         self.displayedAllList = []
         self.pageNum = 0
+        self.modified = False
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
@@ -84,6 +86,7 @@ class GUI(tk.Frame):
         self.fileMenu.add_command(label="Save", command=self.fileS, state=tk.DISABLED)
         self.fileMenu.add_command(label="Save As", command=self.fileSA, state=tk.DISABLED)
         self.fileMenu.add_command(label="Export As")
+        self.fileMenu.add_command(label="Close", command=self.onClose, state=tk.DISABLED)
         self.menubar.add_cascade(label="File", menu=self.fileMenu)
         
         self.viewMenu = tk.Menu(self.menubar)
@@ -225,6 +228,10 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Close", state=tk.NORMAL)
+        self.pageNum = 0
+        self.loadNext()
+        self.partsFrame.grid(row=1, sticky=tk.W)
         
     def fileL(self):
         self.fileDict = functionBase.readFile('load')
@@ -232,6 +239,7 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
+        self.fileMenu.entryconfig("Close", state=tk.NORMAL)
         self.pageNum = 0
         self.loadNext()
         self.partsFrame.grid(row=1, sticky=tk.W)
@@ -240,9 +248,11 @@ class GUI(tk.Frame):
     def fileSA(self):
         self.fileDict['details']['saveLocation']=functionBase.writeFile('saveAs', self.fileDict)
         functionBase.writeFile('save', self.fileDict)
+        self.modified = False
 
     def fileS(self):
         functionBase.writeFile('save', self.fileDict)
+        self.modified = False
 
     def PBStart(self):
         self.ProgressBar["value"] = 0
@@ -432,6 +442,8 @@ class GUI(tk.Frame):
         if indexAll == -1:
             return
             
+        self.modified = True
+            
         if self.fileDict["entries"][str(uid)]["__isCorrect__"] == "yes":
             self.fileDict["entries"][str(uid)]["__isCorrect__"] = "no"
         elif self.fileDict["entries"][str(uid)]["__isCorrect__"] == "no":
@@ -474,4 +486,18 @@ class GUI(tk.Frame):
         self.pageNumUpdate()
     
     def onClose(self):
-        self.parent.destroy()
+        if self.modified:
+            AskSave(self)
+        else:
+            for i in self.displayedAllList:
+                i.destroy()
+            for i in self.displayedEntryList:
+                i.destroy()
+            self.fileDict = {}
+            self.modified = False
+            self.fileMenu.entryconfig("Save", state=tk.DISABLED)
+            self.fileMenu.entryconfig("Save As", state=tk.DISABLED)
+            self.fileMenu.entryconfig("Load", state=tk.NORMAL)
+            self.fileMenu.entryconfig("Import", state=tk.NORMAL)
+            self.fileMenu.entryconfig("Close", state=tk.DISABLED)
+            self.partsFrame.grid_forget()
