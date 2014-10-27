@@ -177,13 +177,6 @@ class GUI(tk.Frame):
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
         
         self.allFrame.grid(row=2, column=0)
-        
-        self.prevButton = tk.Button(self.allFrame, text="Prev", command=self.loadPrev, height=1)
-        self.nextButton = tk.Button(self.allFrame, text="Next", command=self.loadNext, height=1)
-        self.pageLabel = tk.Label(self.allFrame, text="Page ?/?")
-        self.prevButton.grid(row=1, column=1, padx=10)
-        self.pageLabel.grid(row=1, column=2, padx=165)
-        self.nextButton.grid(row=1, column=3, padx=10)
 
         canvas = tk.Canvas(self, relief=tk.FLAT, background = "#D2D2D2", width=640, height=5, highlightthickness=0)
         canvas.grid(column=0, row=999, sticky=tk.NW, columnspan=200)
@@ -337,12 +330,6 @@ class GUI(tk.Frame):
             self.SelectCSV["state"]=tk.ACTIVE
             self.DeselectCSV["state"]=tk.ACTIVE
             CurrentOp="Idle"
-            
-    def loadPrev(self):
-        pass
-        
-    def loadNext(self):
-        pass
     
     def showAllEntries(self):
         self.correctFrame.grid_forget()

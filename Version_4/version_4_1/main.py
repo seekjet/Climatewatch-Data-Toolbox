@@ -5,6 +5,6 @@ import Tkinter as tk
 import GUI        
 
 tkin=tk.Tk()
-tkin.geometry('640x520')
+tkin.geometry('640x480')
 gui = GUI.GUI(tkin)
 gui.mainloop()
