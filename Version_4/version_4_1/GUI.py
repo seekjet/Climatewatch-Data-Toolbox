@@ -232,8 +232,8 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
-        self.pageNum = 1
-        self.pageNumUpdate()
+        self.pageNum = 0
+        self.loadNext()
         self.partsFrame.grid(row=1, sticky=tk.W)
         
 
@@ -448,6 +448,7 @@ class GUI(tk.Frame):
             self.displayedEntryList[indexEntry].destroy()
             
     def loadNext(self):
+        self.pageNum += 1
         for i in self.displayedAllList:
             i.destroy()
         for i in self.displayedEntryList:
@@ -457,10 +458,10 @@ class GUI(tk.Frame):
                 self.addEntry(i)
             except KeyError:
                 break
-        self.pageNum += 1
         self.pageNumUpdate()
         
     def loadPrev(self):
+        self.pageNum -= 1
         for i in self.displayedAllList:
             i.destroy()
         for i in self.displayedEntryList:
@@ -470,7 +471,6 @@ class GUI(tk.Frame):
                 self.addEntry(i)
             except KeyError:
                 break
-        self.pageNum -= 1
         self.pageNumUpdate()
     
     def onClose(self):
