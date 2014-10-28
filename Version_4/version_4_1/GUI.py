@@ -391,7 +391,7 @@ class GUI(tk.Frame):
             else:
                 isCorrect = False
         except KeyError:
-            print "Warning! Potentially incorrectly generated JSON file!"
+            print "Loaded entry "+str(uid)
             self.fileDict["entries"][str(uid)]["__isCorrect__"] = "yes"
             isCorrect = True
             
