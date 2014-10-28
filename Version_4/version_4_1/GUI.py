@@ -85,7 +85,7 @@ class GUI(tk.Frame):
         self.fileMenu.add_command(label="Load", command=self.fileL)
         self.fileMenu.add_command(label="Save", command=self.fileS, state=tk.DISABLED)
         self.fileMenu.add_command(label="Save As", command=self.fileSA, state=tk.DISABLED)
-        self.fileMenu.add_command(label="Export As", command=self.fileE, state=tk.DISABLED)
+        self.fileMenu.add_command(label="Export", command=self.fileE, state=tk.DISABLED)
         self.fileMenu.add_command(label="Close", command=self.onClose, state=tk.DISABLED)
         self.menubar.add_cascade(label="File", menu=self.fileMenu)
         
@@ -96,6 +96,7 @@ class GUI(tk.Frame):
         self.menubar.add_cascade(label="Filters", menu=self.filtersMenu)
         
         self.automationMenu = tk.Menu(self.menubar)
+        self.automationMenu.add_command(label="Bird-on-Nest sorter", command=self.birdOnNestAuto)
         self.menubar.add_cascade(label="Automation", menu=self.automationMenu)
         
         self.editMenu = tk.Menu(self.menubar)
@@ -215,6 +216,15 @@ class GUI(tk.Frame):
         canvas.grid(column=0,row=999,sticky=tk.SW,columnspan=100)
 
         self.PBStart()
+        
+    def birdOnNestAuto(self):
+        total = 0
+        for i in range(self.fileDict["details"]["totEntries"]):
+            if (self.fileDict["entries"][str(i)]["Behaviour"] in ["Bird on nest", "Bird on Eggs", "Bird on Chicks"]) and (self.fileDict["entries"][str(i)]["Nest present"] != "Yes"):
+                total += 0
+                self.fileDict["entries"][str(i)]["__isCorrect__"] = "no"
+        print "Completed, found "+str(total)+" contradictory entries."
+        self.reload()
         
     def splitFileName(self, fileName):
         res = ""
