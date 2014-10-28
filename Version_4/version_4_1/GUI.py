@@ -85,7 +85,7 @@ class GUI(tk.Frame):
         self.fileMenu.add_command(label="Load", command=self.fileL)
         self.fileMenu.add_command(label="Save", command=self.fileS, state=tk.DISABLED)
         self.fileMenu.add_command(label="Save As", command=self.fileSA, state=tk.DISABLED)
-        self.fileMenu.add_command(label="Export As")
+        self.fileMenu.add_command(label="Export As", command=self.fileE, state=tk.DISABLED)
         self.fileMenu.add_command(label="Close", command=self.onClose, state=tk.DISABLED)
         self.menubar.add_cascade(label="File", menu=self.fileMenu)
         
@@ -241,10 +241,14 @@ class GUI(tk.Frame):
     def fileI(self):
         self.fileDict = functionBase.readFile('import')
         self.loadFile()
+        if self.fileDict=="nope":
+            self.fileDict={}
         
     def fileL(self):
         self.fileDict = functionBase.readFile('load')
         self.loadFile()
+        if self.fileDict=="nope":
+            self.fileDict={}
         
     def loadFile(self):
         # This is called by import/load after the fileDict has been created.
@@ -442,6 +446,7 @@ class GUI(tk.Frame):
             self.fileMenu.entryconfig("Load", state=tk.NORMAL)
             self.fileMenu.entryconfig("Import", state=tk.NORMAL)
             self.fileMenu.entryconfig("Close", state=tk.DISABLED)
+            self.fileMenu.entryconfig("Export", state=tk.DISABLED)
             self.partsFrame.grid_forget()
             self.fileLabel.config(text = "No file selected")
             self.totEntriesLabel.config(text = "")
