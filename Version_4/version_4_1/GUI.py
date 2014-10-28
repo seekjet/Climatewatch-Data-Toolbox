@@ -223,7 +223,7 @@ class GUI(tk.Frame):
             if (self.fileDict["entries"][str(i)]["Behaviour"] in ["Bird on nest", "Bird on Eggs", "Bird on Chicks"]) and (self.fileDict["entries"][str(i)]["Nest present"] != "Yes"):
                 total += 0
                 self.fileDict["entries"][str(i)]["__isCorrect__"] = "no"
-        print "Completed, found "+str(total)+" contradictory entries."
+        tkMessageBox.showinfo("Bird-on-Nest sorter", "Completed, found "+str(total)+" contradictory entries.")
         self.reload()
         
     def splitFileName(self, fileName):
@@ -301,21 +301,19 @@ class GUI(tk.Frame):
         self.PBMax = 10000
         self.ProgressBar["maximum"] = self.PBMax
         self.PBPercentage = 0
-        self.PBChange()
+        #self.PBChange()
 
     def fileE(self):
         functionBase.exportFile(self.fileDict)
 
     def PBChange(self):
-        '''simulate reading 500 bytes; update progress bar'''
         self.CurrentOperation["text"]=self.CurrentOp
-        
-        if Action == "Processing":
-            self.ProgressBar["maximum"]=Entries
-            self.ProgressBar["value"]=Entry
-        if self.PBPercentage >= self.PBMax:
-            self.PBPercentage = 0
-        self.after(100, self.PBChange)
+        if self.PBPercentage > self.PBMax:
+            self.PBPercentage = self.PBMax
+        self.ProgressBar["maximum"]=self.PBMax
+        self.ProgressBar["value"]=self.PBPercentage
+        # Invoking this manually. Sorry, but threads don't execute when they're given no time!
+        #self.after(100, self.PBChange)
     
     def showAllEntries(self):
         self.correctFrame.grid_forget()
@@ -352,7 +350,6 @@ class GUI(tk.Frame):
             else:
                 isCorrect = False
         except KeyError:
-            print "Loaded entry "+str(uid)
             self.fileDict["entries"][str(uid)]["__isCorrect__"] = "yes"
             isCorrect = True
             
@@ -421,18 +418,24 @@ class GUI(tk.Frame):
             self.displayedEntryList[indexEntry].destroy()
             
     def reload(self):
+        self.CurrentOp = "Loading entries "+str((self.pageNum-1)*self.global_config["displayedEntries"]+1)+" to "+str(self.pageNum*self.global_config["displayedEntries"])
+        self.PBPercentage = 0
+        self.PBChange()
         for i in self.displayedAllList:
             i.destroy()
         for i in self.displayedEntryList:
             i.destroy()
-        self.CurrentOp = "Loading entries "+str((self.pageNum-1)*self.global_config["displayedEntries"]+1)+" to "+str(self.pageNum*self.global_config["displayedEntries"])
         for i in range( (self.pageNum-1)*self.global_config["displayedEntries"], self.pageNum*self.global_config["displayedEntries"] ):
             try:
+                self.PBPercentage = (float(i - (self.pageNum-1)*self.global_config["displayedEntries"] )/30)*self.PBMax
+                self.PBChange()
                 self.addEntry(i)
-                self.PBPercentage = (float(i)/30)*self.PBMax
+                self.parent.update()
             except KeyError:
                 break
         self.PBPercentage = 0
+        self.CurrentOp = "Idle"
+        self.PBChange()
     
     def loadNext(self):
         self.pageNum += 1
