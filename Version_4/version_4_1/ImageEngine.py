@@ -32,16 +32,15 @@ def Engine(guiObject):
             if not os.path.isfile("resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]):
                 urllib.urlretrieve(guiObject.fileDict["entries"][str(i)]["associatedMedia"], "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"])
                 if i in range( (guiObject.pageNum-1)*guiObject.global_config["displayedEntries"], guiObject.pageNum*guiObject.global_config["displayedEntries"] ):
-                     for j in guiObject.displayedAllList:
+                    for j in guiObject.displayedAllList:
                         if j.uid == i:
                             j.picturePath = "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]
                             j.drawItems()
                             
-                     for j in guiObject.displayedEntryList:
-                         if j.uid == i:
-                             j.picturePath = "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]
-                             j.drawItems()
+                    for j in guiObject.displayedEntryList:
+                        if j.uid == i:
+                            j.picturePath = "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]
+                            j.drawItems()
     
     wait = True
     thread.exit()
-        
