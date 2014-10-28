@@ -30,6 +30,7 @@ def Engine(guiObject):
             thread.exit()
         if guiObject.fileDict["entries"][str(i)]["associatedMedia"] != "":    
             if not os.path.isfile("resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]):
+                print "Downloading picture for entry "+str(i)
                 urllib.urlretrieve(guiObject.fileDict["entries"][str(i)]["associatedMedia"], "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"])
                 if i in range( (guiObject.pageNum-1)*guiObject.global_config["displayedEntries"], guiObject.pageNum*guiObject.global_config["displayedEntries"] ):
                     for j in guiObject.displayedAllList:
