@@ -33,6 +33,10 @@ class DisplayedEntry:
         
         if self.rootFrame.master.master.fileDict["entries"][str(uid)]["associatedMedia"] == "":
             self.picturePath = "resources"+file_delimeter+"default.png"
+        else:
+            self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
+            
+        """
         elif os.path.isfile("resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]):
             self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
         else:
@@ -41,6 +45,7 @@ class DisplayedEntry:
                 self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
             except IOError:
                 self.picturePath = "resources"+file_delimeter+"default.png"
+        """
         
         self.drawItems(flagcolor)
         
@@ -49,8 +54,8 @@ class DisplayedEntry:
         try:
             photo = Image.open(self.picturePath)
         except IOError:
-            # urlretrieve() doesn't always behave correctly for 404s
-            self.picturePath = "resources"+file_delimeter+"default.png"
+            # It hasn't downloaded yet.
+            self.picturePath = "resources"+file_delimeter+"Downfag.png"
             photo = Image.open(self.picturePath)
         aspectRatio = float(photo.size[0])/float(photo.size[1])
         if aspectRatio < 96.0/64.0:
