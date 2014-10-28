@@ -30,6 +30,7 @@ class DisplayedEntry:
         self.entryCanvas = tk.Canvas(self.innerFrame, height=64, width=self.width-8)
         self.entryCanvas.grid(row=self.row*2, pady=1, padx=1, sticky=tk.NW)
         self.rootCanvas.configure(scrollregion=self.rootCanvas.bbox(tk.ALL),width=self.width,height=430)
+        self.flagcolor = flagcolor
         
         if self.rootFrame.master.master.fileDict["entries"][str(uid)]["associatedMedia"] == "":
             self.picturePath = "resources"+file_delimeter+"default.png"
@@ -47,10 +48,10 @@ class DisplayedEntry:
                 self.picturePath = "resources"+file_delimeter+"default.png"
         """
         
-        self.drawItems(flagcolor)
+        self.drawItems()
         
     def drawItems(self, flagcolor):
-        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=flagcolor, outline="#D9D9D9")
+        self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=self.flagcolor, outline="#D9D9D9")
         try:
             photo = Image.open(self.picturePath)
         except IOError:
