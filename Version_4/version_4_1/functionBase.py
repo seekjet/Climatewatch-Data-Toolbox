@@ -85,3 +85,14 @@ def writeFile(flag, fileDict):
         except KeyError:
             #popup of you need to save as first
             writeFile('saveAs', fileDict)
+
+def exportFile(fileDict):
+    headers = fileDict['headers']
+    nestedList=[]
+    nestedList.append(headers)
+    for i in range(fileDict['details']['totEntries']):
+        tempList=[]
+        for head in headers:
+            tempList.append(fileDict['entries'][str(i)][head])
+        nestedList.append(tempList)
+    print templist[1]
