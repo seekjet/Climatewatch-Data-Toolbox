@@ -61,11 +61,15 @@ def readFile(flag):
         if fileLocation != "":
             x=importFile(fileLocation)
             return x
+        else:
+            return "nope"
     if flag=='load':
         fileLocation=tkFileDialog.askopenfilename(filetypes=[("JSON Files","*.json")])
         if fileLocation != "":
             x=loadJSON(fileLocation)
             return x
+        else:
+            return "nope"
 
 def writeFile(flag, fileDict):
     if flag=='saveAs':
@@ -78,6 +82,7 @@ def writeFile(flag, fileDict):
             target = open(fileLocation,'w')
             json.dump(fileDict,target,indent=4,separators=(',',':'))
             return fileLocation
+            
     if flag=='save':
         try:
             target = open(fileDict['details']['saveLocation'],'w')
@@ -96,3 +101,12 @@ def exportFile(fileDict):
             tempList.append(fileDict['entries'][str(i)][head])
         nestedList.append(tempList)
     print templist[1]
+    ####
+    fileLocation=tkFileDialog.asksaveasfilename(filetypes=[('CSV Files','*.csv')],initialfile=(fileDict['details']['fileName']))
+    if fileLocation != "":
+        x=fileLocation.split('.')[-1]
+        if x!='csv':
+            fileLocation=fileLocation+'.csv'
+        target = open(fileLocation,'w')
+        ####CSV SHIT HERE
+            

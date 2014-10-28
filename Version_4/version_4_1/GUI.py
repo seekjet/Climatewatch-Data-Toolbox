@@ -288,7 +288,9 @@ class GUI(tk.Frame):
         self.ProgressBar["maximum"] = self.PBMax
         self.PBPercentage = 0
         self.PBChange()
-        
+
+    def fileE(self):
+        functionBase.exportFile(self.fileDict)
 
     def PBChange(self):
         '''simulate reading 500 bytes; update progress bar'''
