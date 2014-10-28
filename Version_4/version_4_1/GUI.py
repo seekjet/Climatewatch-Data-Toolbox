@@ -251,6 +251,9 @@ class GUI(tk.Frame):
         self.partsFrame.grid(row=1, sticky=tk.W)
         
     def startDL(self):
+        # In case the thread is restarted...
+        ImageEngine.shutoff = False
+        ImageEngine.wait = False
         thread.start_new_thread(ImageEngine.Engine, (self,))
 
     def fileSA(self):
