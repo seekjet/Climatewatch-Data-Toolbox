@@ -240,15 +240,19 @@ class GUI(tk.Frame):
 
     def fileI(self):
         self.fileDict = functionBase.readFile('import')
-        self.loadFile()
+        
         if self.fileDict=="nope":
             self.fileDict={}
+        else:
+            self.loadFile()
         
     def fileL(self):
         self.fileDict = functionBase.readFile('load')
-        self.loadFile()
+        
         if self.fileDict=="nope":
             self.fileDict={}
+        else:
+            self.loadFile()
         
     def loadFile(self):
         # This is called by import/load after the fileDict has been created.
