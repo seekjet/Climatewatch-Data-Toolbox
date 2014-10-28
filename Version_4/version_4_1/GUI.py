@@ -18,14 +18,9 @@ from ConsoleUI import ConsoleUI
 from AskSave import AskSave
 
 # Global vars
-PBPercentage = 0
-FileLoc="No CSV File Selected"
 CurrentOp="Idle"
-Entries = 0
 Entry = 0
 Action = ""
-Stop = 0
-End=0
 
 def escape(x):
     res = ""
@@ -50,6 +45,7 @@ class GUI(tk.Frame):
         self.displayedEntryList = []
         self.displayedAllList = []
         self.pageNum = 0
+        self.PBPercentage = 0
         self.modified = False
         
         ImageEngine.shutoff = False
@@ -188,10 +184,18 @@ class GUI(tk.Frame):
         
         self.sideFrame = tk.Frame(self.allFrame, background = "#D2D2D2")
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=98,highlightthickness=0)
+        self.FileDescriptorWindow.pack_propagate(False)
         self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
         self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=2, pady=2)
         self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=2, pady=0)
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
+        
+        self.fileLabel = tk.Label(self.FileDescriptorWindow, text="No file selected", font="Verdana 7 bold")
+        self.totEntriesLabel = tk.Label(self.FileDescriptorWindow, text="")
+        self.totPartsLabel = tk.Label(self.FileDescriptorWindow, text="")
+        self.fileLabel.pack(anchor=tk.NW, padx=5, pady=5)
+        self.totEntriesLabel.pack(anchor=tk.NW, padx=5, pady=5)
+        self.totPartsLabel.pack(anchor=tk.NW, padx=5, pady=5)
         
         self.allFrame.grid(row=2, column=0)
 
@@ -212,6 +216,14 @@ class GUI(tk.Frame):
 
         self.PBStart()
         
+    def splitFileName(self, fileName):
+        res = ""
+        for i in range(len(fileName)):
+            if (i%16) == 0:
+                res += "\n"
+            res += fileName[i]
+        return res
+        
     def configScrollRegion(self, event):
         self.DataCanvasAll.configure(scrollregion=self.DataCanvasAll.bbox(tk.ALL),width=510,height=430)
         self.DataCanvasCorrect.configure(scrollregion=self.DataCanvasCorrect.bbox(tk.ALL),width=612,height=430)
@@ -228,18 +240,14 @@ class GUI(tk.Frame):
 
     def fileI(self):
         self.fileDict = functionBase.readFile('import')
-        self.fileMenu.entryconfig("Save", state=tk.NORMAL)
-        self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
-        self.fileMenu.entryconfig("Load", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Import", state=tk.DISABLED)
-        self.fileMenu.entryconfig("Close", state=tk.NORMAL)
-        self.pageNum = 0
-        self.startDL()
-        self.loadNext()
-        self.partsFrame.grid(row=1, sticky=tk.W)
+        self.loadFile()
         
     def fileL(self):
         self.fileDict = functionBase.readFile('load')
+        self.loadFile()
+        
+    def loadFile(self):
+        # This is called by import/load after the fileDict has been created.
         self.fileMenu.entryconfig("Save", state=tk.NORMAL)
         self.fileMenu.entryconfig("Save As", state=tk.NORMAL)
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
@@ -248,6 +256,11 @@ class GUI(tk.Frame):
         self.pageNum = 0
         self.startDL()
         self.loadNext()
+        
+        self.fileLabel.config(text=self.splitFileName(self.fileDict["details"]["fileName"]))
+        self.totEntriesLabel.config(text=str(self.fileDict["details"]["totEntries"])+" entries")
+        self.totPartsLabel.config(text=str(int(self.fileDict["details"]["totEntries"]/float(self.global_config["displayedEntries"]))+1)+" parts")
+        
         self.partsFrame.grid(row=1, sticky=tk.W)
         
     def startDL(self):
@@ -269,85 +282,20 @@ class GUI(tk.Frame):
         self.ProgressBar["value"] = 0
         self.PBMax = 10000
         self.ProgressBar["maximum"] = self.PBMax
-        global PBPercentage
-        PBPercentage = 0
+        self.PBPercentage = 0
         self.PBChange()
         
 
     def PBChange(self):
         '''simulate reading 500 bytes; update progress bar'''
-        global PBPercentage
         self.CurrentOperation["text"]=CurrentOp
         
         if Action == "Processing":
             self.ProgressBar["maximum"]=Entries
             self.ProgressBar["value"]=Entry
-        if PBPercentage >= self.PBMax:
-            global PBPercentage
-            PBPercentage = 0
-            self.after(100, self.PBChange)
-        else:
-            self.after(100, self.PBChange)
-            
-    def loadEntries(self):    
-        # Load tabs here
-        with open(FileLoc, 'rb') as f:
-            BirdFile = list(csv.reader(f))
-
-    def FindFile(self,flag):
-        global CurrentOp
-        CurrentOp="Selecting CSV File..."
-        global FileLoc
-        FileLoc = tkFileDialog.askopenfilename(filetypes=[("CSV Files","*.csv")])
-        if FileLoc!="":
-            global FileLoc 
-            FileLoc = escape(FileLoc)
-            self.loadEntries()
-        else:
-            global FileLoc
-            FileLoc = "No CSV File Selected"
-        self.SelectedCSV["text"]=FileLoc
-        print "Selected file "+FileLoc
-        CurrentOp="Idle"
-
-    def FileDeselect(self):
-        global CurrentOp
-        CurrentOp="Deselecting CSV File..."
-        global FileLoc
-        FileLoc="No CSV File Selected"
-        self.SelectedCSV["text"]=FileLoc
-        print "File Deselected"
-        CurrentOp="Idle"
-
-    def StopDL(self):
-        if Stop==0:
-            global Stop
-            Stop = 1
-            self.StopDLoad["text"]="Resume Download"
-        else:
-            global Stop
-            Stop = 0
-            self.StopDLoad["text"]="Pause Download"
-
-    def ExitDL(self):
-        if End==-1:
-            global End
-            End=1
-            global CurrentOp
-            CurrentOp="Stopping..."
-            while End!=2:
-                time.sleep(1)
-            
-            #other shit here
-            global Entry
-            Entry = 0
-            
-            self.StopDLoad["state"]=tk.DISABLED
-            self.ExitDload["state"]=tk.DISABLED
-            self.PrepareImages["state"]=tk.ACTIVE
-            self.SelectCSV["state"]=tk.ACTIVE
-            self.DeselectCSV["state"]=tk.ACTIVE
-            CurrentOp="Idle"
+        if self.PBPercentage >= self.PBMax:
+            self.PBPercentage = 0
+        self.after(100, self.PBChange)
     
     def showAllEntries(self):
         self.correctFrame.grid_forget()
@@ -452,8 +400,7 @@ class GUI(tk.Frame):
             self.displayedAllList[indexAll].entryCanvas.itemconfigure(self.displayedAllList[indexAll].flagRect, fill="#81F781")
             self.displayedEntryList[indexEntry].destroy()
             
-    def loadNext(self):
-        self.pageNum += 1
+    def reload(self):
         for i in self.displayedAllList:
             i.destroy()
         for i in self.displayedEntryList:
@@ -463,19 +410,15 @@ class GUI(tk.Frame):
                 self.addEntry(i)
             except KeyError:
                 break
+    
+    def loadNext(self):
+        self.pageNum += 1
+        self.reload()
         self.pageNumUpdate()
         
     def loadPrev(self):
         self.pageNum -= 1
-        for i in self.displayedAllList:
-            i.destroy()
-        for i in self.displayedEntryList:
-            i.destroy()
-        for i in range( (self.pageNum-1)*self.global_config["displayedEntries"], self.pageNum*self.global_config["displayedEntries"] ):
-            try:
-                self.addEntry(i)
-            except KeyError:
-                break
+        self.reload()
         self.pageNumUpdate()
     
     def onClose(self):
@@ -497,7 +440,21 @@ class GUI(tk.Frame):
             self.fileMenu.entryconfig("Import", state=tk.NORMAL)
             self.fileMenu.entryconfig("Close", state=tk.DISABLED)
             self.partsFrame.grid_forget()
+            self.fileLabel.config(text = "No file selected")
+            self.totEntriesLabel.config(text = "")
+            self.totPartsLabel.config(text = "")
             
     def onDestroy(self):
-        print "Bye Bye.."
+        ImageEngine.shutoff = True
+        while not ImageEngine.wait:
+            time.sleep(1)
+        if self.modified:
+            AskSave(self)
+        else:
+            for i in self.displayedAllList:
+                i.destroy()
+            for i in self.displayedEntryList:
+                i.destroy()
+            self.fileDict = {}
+            self.modified = False
         self.parent.destroy()
