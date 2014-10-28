@@ -36,21 +36,10 @@ class DisplayedEntry:
             self.picturePath = "resources"+file_delimeter+"default.png"
         else:
             self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
-            
-        """
-        elif os.path.isfile("resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]):
-            self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
-        else:
-            try:
-                urllib.urlretrieve(self.rootFrame.master.master.fileDict["entries"][str(uid)]["associatedMedia"], "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"])
-                self.picturePath = "resources"+file_delimeter+self.rootFrame.master.master.fileDict["entries"][str(uid)]["catalogueNumber"]
-            except IOError:
-                self.picturePath = "resources"+file_delimeter+"default.png"
-        """
         
         self.drawItems()
         
-    def drawItems(self, flagcolor):
+    def drawItems(self):
         self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=self.flagcolor, outline="#D9D9D9")
         try:
             photo = Image.open(self.picturePath)
