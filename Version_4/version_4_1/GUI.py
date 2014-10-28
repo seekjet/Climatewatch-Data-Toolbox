@@ -12,6 +12,7 @@ import json
 
 # The code we actually wrote...
 import functionBase
+import ImageEngine
 from DisplayedEntry import DisplayedEntry
 from ConsoleUI import ConsoleUI
 from AskSave import AskSave
@@ -51,10 +52,13 @@ class GUI(tk.Frame):
         self.pageNum = 0
         self.modified = False
         
+        ImageEngine.shutoff = False
+        ImageEngine.wait = False
+        
         tk.Frame.__init__(self, parent)
         self.parent = parent
         # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ignores the line completely...
-        self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onClose)
+        self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onDestroy)
         
         # Load global config settings
         try:
@@ -230,6 +234,7 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         self.fileMenu.entryconfig("Close", state=tk.NORMAL)
         self.pageNum = 0
+        self.startDL()
         self.loadNext()
         self.partsFrame.grid(row=1, sticky=tk.W)
         
@@ -241,9 +246,12 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         self.fileMenu.entryconfig("Close", state=tk.NORMAL)
         self.pageNum = 0
+        self.startDL()
         self.loadNext()
         self.partsFrame.grid(row=1, sticky=tk.W)
         
+    def startDL(self):
+        thread.start_new_thread(ImageEngine.Engine, (self,))
 
     def fileSA(self):
         self.fileDict['details']['saveLocation']=functionBase.writeFile('saveAs', self.fileDict)
@@ -307,24 +315,6 @@ class GUI(tk.Frame):
         self.SelectedCSV["text"]=FileLoc
         print "File Deselected"
         CurrentOp="Idle"
-
-    def PreImages(self):
-        if FileLoc!="No CSV File Selected":
-            global Stop
-            Stop = 0
-            self.StopDLoad["text"]="Pause Download"
-            global CurrentOp
-            CurrentOp="Preparing to process..."
-            self.PrepareImages["state"]=tk.DISABLED
-            self.SelectCSV["state"]=tk.DISABLED
-            self.DeselectCSV["state"]=tk.DISABLED
-            self.StopDLoad["state"]=tk.ACTIVE
-            self.ExitDload["state"]=tk.ACTIVE
-            global End
-            End = -1
-            
-        
-            thread.start_new_thread(ImageEngine.Engine,())
 
     def StopDL(self):
         if Stop==0:
@@ -486,6 +476,9 @@ class GUI(tk.Frame):
         self.pageNumUpdate()
     
     def onClose(self):
+        ImageEngine.shutoff = True
+        while not ImageEngine.wait:
+            time.sleep(1)
         if self.modified:
             AskSave(self)
         else:
@@ -501,3 +494,7 @@ class GUI(tk.Frame):
             self.fileMenu.entryconfig("Import", state=tk.NORMAL)
             self.fileMenu.entryconfig("Close", state=tk.DISABLED)
             self.partsFrame.grid_forget()
+            
+    def onDestroy(self):
+        print "Bye Bye.."
+        self.parent.destroy()
