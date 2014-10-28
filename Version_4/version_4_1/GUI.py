@@ -18,7 +18,6 @@ from ConsoleUI import ConsoleUI
 from AskSave import AskSave
 
 # Global vars
-CurrentOp="Idle"
 Entry = 0
 Action = ""
 
@@ -46,6 +45,7 @@ class GUI(tk.Frame):
         self.displayedAllList = []
         self.pageNum = 0
         self.PBPercentage = 0
+        self.CurrentOp = "Idle"
         self.modified = False
         
         ImageEngine.shutoff = False
@@ -103,7 +103,7 @@ class GUI(tk.Frame):
         self.editMenu.add_command(label="GUI Console", command=self.guiConsole)
         self.menubar.add_cascade(label="Edit", menu=self.editMenu)
 
-        self.CurrentOperation = tk.Label(self, text=CurrentOp)
+        self.CurrentOperation = tk.Label(self, text=self.CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
         
         self.tabsFrame = tk.Frame(self)
@@ -288,7 +288,7 @@ class GUI(tk.Frame):
 
     def PBChange(self):
         '''simulate reading 500 bytes; update progress bar'''
-        self.CurrentOperation["text"]=CurrentOp
+        self.CurrentOperation["text"]=self.CurrentOp
         
         if Action == "Processing":
             self.ProgressBar["maximum"]=Entries
@@ -405,11 +405,14 @@ class GUI(tk.Frame):
             i.destroy()
         for i in self.displayedEntryList:
             i.destroy()
+        self.CurrentOp = "Loading entries "+str((self.pageNum-1)*self.global_config["displayedEntries"]+1)+" to "+str(self.pageNum*self.global_config["displayedEntries"])
         for i in range( (self.pageNum-1)*self.global_config["displayedEntries"], self.pageNum*self.global_config["displayedEntries"] ):
             try:
                 self.addEntry(i)
+                self.PBPercentage = (float(i)/30)*self.PBMax
             except KeyError:
                 break
+        self.PBPercentage = 0
     
     def loadNext(self):
         self.pageNum += 1
