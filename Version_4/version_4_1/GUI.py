@@ -130,11 +130,14 @@ class GUI(tk.Frame):
         self.fileMenu.add_command(label="Close", command=self.onClose, state=tk.DISABLED)
         self.menubar.add_cascade(label="File", menu=self.fileMenu)
         
+        # Coming soon...
+        """
         self.viewMenu = tk.Menu(self.menubar)
         self.menubar.add_cascade(label="View", menu=self.viewMenu)
         
         self.filtersMenu = tk.Menu(self.menubar)
         self.menubar.add_cascade(label="Filters", menu=self.filtersMenu)
+        """
         
         self.automationMenu = tk.Menu(self.menubar)
         self.automationMenu.add_command(label="Bird-on-Nest sorter", command=self.birdOnNestAuto, state=tk.DISABLED)
@@ -324,6 +327,7 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         self.fileMenu.entryconfig("Close", state=tk.NORMAL)
+        self.fileMenu.entryconfig("Export", state=tk.NORMAL)
         self.automationMenu.entryconfig("Bird-on-Nest sorter", state=tk.NORMAL)
         self.global_config["headers"] = self.fileDict["headers"]
         fp = open("resources/global_config.json", "w")

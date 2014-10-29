@@ -1,7 +1,23 @@
-#needed modules: csv, tkFileDialog, json
+import os
 import csv
 import tkFileDialog
+import tkMessageBox
 import json
+from sys import platform as SYS_PLATFORM
+
+def escape(x):
+    res = ""
+    for i in x:
+        if i == "\\": # If it equals a single backslash.
+            res += "\\\\" # Add two backslashes
+        else:
+            res += i # Add whatever the character was
+    return res
+
+if "windows" in SYS_PLATFORM.lower():
+    file_delimeter = "\\"
+else:
+    file_delimeter = "/"
 
 #fileLocation in the format of C:/Users/Name/Desktop/cracticus_tibicen.csv
 def importFile(fileLocation):
@@ -38,6 +54,9 @@ def importFile(fileLocation):
     fileFormat=(fileLocation.split("/")[-1]).split('.')[-1]
     fileDict['details']['fileName']=fileName
     fileDict['details']['fileFormat']=fileFormat
+    for i in range(fileDict['details']['totEntries']):
+        if "__isCorrect__" not in fileDict['entries'][str(i)].keys():
+            fileDict['entries'][str(i)]["__isCorrect__"] = "yes"
     #save dictionary to file
     target = open(fileName+'.json', 'w')
     #target.write(json.dump(fileDict))
@@ -49,6 +68,9 @@ def importFile(fileLocation):
 def loadJSON(fileLocation):
     f = open(fileLocation,'r')
     fileDict=json.load(f)
+    for i in range(fileDict['details']['totEntries']):
+        if "__isCorrect__" not in fileDict['entries'][str(i)].keys():
+            fileDict['entries'][str(i)]["__isCorrect__"] = "yes"
     fileDict['details']['saveLocation']=fileLocation
     f.close()
     #print fileDict['details']['fileName']
@@ -93,20 +115,31 @@ def writeFile(flag, fileDict):
 
 def exportFile(fileDict):
     headers = fileDict['headers']
-    nestedList=[]
-    nestedList.append(headers)
+    nestedCorrectList=[]
+    nestedWrongList=[]
+    nestedCorrectList.append(headers)
+    nestedWrongList.append(headers)
     for i in range(fileDict['details']['totEntries']):
         tempList=[]
         for head in headers:
             tempList.append(fileDict['entries'][str(i)][head])
-        nestedList.append(tempList)
-    print templist[1]
+        if fileDict['entries'][str(i)]["__isCorrect__"] == "yes":
+            nestedCorrectList.append(tempList)
+        else:
+            nestedWrongList.append(tempList)
+    #print tempList[1]
     ####
-    fileLocation=tkFileDialog.asksaveasfilename(filetypes=[('CSV Files','*.csv')],initialfile=(fileDict['details']['fileName']))
-    if fileLocation != "":
-        x=fileLocation.split('.')[-1]
-        if x!='csv':
-            fileLocation=fileLocation+'.csv'
-        target = open(fileLocation,'w')
-        ####CSV SHIT HERE
-            
+    fileDirectory=tkFileDialog.askdirectory(initialdir=(fileDict['details']['fileName']))
+    if fileDirectory != "":
+        try:
+            if not os.path.isdir(fileDirectory):
+                os.mkdir(fileDirectory)
+            with open(fileDirectory+file_delimeter+fileDict['details']['fileName']+"-correct.csv", 'wb') as correctFile:
+                writer = csv.writer(correctFile)
+                writer.writerows(nestedCorrectList)
+            with open(fileDirectory+file_delimeter+fileDict['details']['fileName']+"-wrong.csv", 'wb') as wrongFile:
+                writer = csv.writer(wrongFile)
+                writer.writerows(nestedWrongList)
+            tkMessageBox.showinfo("Export", "File successfully exported to: "+fileDirectory)
+        except:
+            tkMessageBox.showwarning("Export", "Something went wrong! Make sure to double check your file path. Your supplied the following directory: "+fileDirectory)
