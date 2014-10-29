@@ -16,6 +16,7 @@ import ImageEngine
 from DisplayedEntry import DisplayedEntry
 from ConsoleUI import ConsoleUI
 from AskSave import AskSave
+from SettingsUI import SettingsUI
 
 # Global vars
 Entry = 0
@@ -53,7 +54,6 @@ class GUI(tk.Frame):
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
-        # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ignores the line completely...
         self.parent.wm_protocol("WM_DELETE_WINDOW", self.onDestroy)
         
         # Load global config settings
@@ -64,7 +64,47 @@ class GUI(tk.Frame):
         except IOError:
             fp = open("resources/global_config.json", "w")
             # Any permanent options go in this dictionary
-            self.global_config = {"displayedEntries":30}
+            self.global_config = {"displayedEntries":30,
+                "headers":[
+                    "catalogueNumber",
+                    "basisOfRecord",
+                    "recordedBy",
+                    "scientificName",
+                    "vernacularName",
+                    "identificationQualifier",
+                    "eventDate",
+                    "stateProvince",
+                    "locality",
+                    "decimalLatitude",
+                    "decimalLongitude",
+                    "coordinateUncertaintyInMeters",
+                    "individualCount",
+                    "associatedMedia",
+                    "occurrenceRemarks",
+                    "Behaviour",
+                    "Nest present",
+                    "Habitat" ],
+                
+                "displayedFields":[
+                    "catalogueNumber",
+                    "basisOfRecord",
+                    "recordedBy",
+                    "scientificName",
+                    "vernacularName",
+                    "identificationQualifier",
+                    "eventDate",
+                    "stateProvince",
+                    "locality",
+                    "decimalLatitude",
+                    "decimalLongitude",
+                    "coordinateUncertaintyInMeters",
+                    "individualCount",
+                    "associatedMedia",
+                    "occurrenceRemarks",
+                    "Behaviour",
+                    "Nest present",
+                    "Habitat" ],
+                "consoleAllowed":"no"  }
             json.dump(self.global_config, fp)
             fp.close()
         
@@ -96,13 +136,18 @@ class GUI(tk.Frame):
         self.menubar.add_cascade(label="Filters", menu=self.filtersMenu)
         
         self.automationMenu = tk.Menu(self.menubar)
-        self.automationMenu.add_command(label="Bird-on-Nest sorter", command=self.birdOnNestAuto)
+        self.automationMenu.add_command(label="Bird-on-Nest sorter", command=self.birdOnNestAuto, state=tk.DISABLED)
         self.menubar.add_cascade(label="Automation", menu=self.automationMenu)
         
         self.editMenu = tk.Menu(self.menubar)
         self.editMenu.add_command(label="Console", command=self.console)
         self.editMenu.add_command(label="GUI Console", command=self.guiConsole)
+        self.editMenu.add_command(label="Settings", command=self.editSettings)
         self.menubar.add_cascade(label="Edit", menu=self.editMenu)
+        
+        if self.global_config["consoleAllowed"] == "no":
+            self.editMenu.entryconfig("Console", state=tk.DISABLED)
+            self.editMenu.entryconfig("GUI Console", state=tk.DISABLED)
 
         self.CurrentOperation = tk.Label(self, text=self.CurrentOp)
         self.CurrentOperation.grid(row=4, column=0, sticky=tk.NW)
@@ -218,6 +263,7 @@ class GUI(tk.Frame):
         self.PBStart()
         
     def birdOnNestAuto(self):
+        self.modified = True
         total = 0
         for i in range(self.fileDict["details"]["totEntries"]):
             if (self.fileDict["entries"][str(i)]["Behaviour"] in ["Bird on nest", "Bird on Eggs", "Bird on Chicks"]) and (self.fileDict["entries"][str(i)]["Nest present"] != "Yes"):
@@ -225,6 +271,11 @@ class GUI(tk.Frame):
                 self.fileDict["entries"][str(i)]["__isCorrect__"] = "no"
         tkMessageBox.showinfo("Bird-on-Nest sorter", "Completed, found "+str(total)+" contradictory entries.")
         self.reload()
+        
+    def editSettings(self):
+        editSettingsUItk = tk.Toplevel()
+        SettingsUI(editSettingsUItk, self)
+        editSettingsUItk.mainloop()
         
     def splitFileName(self, fileName):
         res = ""
@@ -271,6 +322,11 @@ class GUI(tk.Frame):
         self.fileMenu.entryconfig("Load", state=tk.DISABLED)
         self.fileMenu.entryconfig("Import", state=tk.DISABLED)
         self.fileMenu.entryconfig("Close", state=tk.NORMAL)
+        self.automationMenu.entryconfig("Bird-on-Nest sorter", state=tk.NORMAL)
+        self.global_config["headers"] = self.fileDict["headers"]
+        fp = open("resources/global_config.json", "w")
+        json.dump(self.global_config, fp)
+        fp.close()
         self.pageNum = 0
         self.startDL()
         self.loadNext()
@@ -419,6 +475,8 @@ class GUI(tk.Frame):
             self.displayedEntryList[indexEntry].destroy()
             
     def reload(self):
+        if self.fileDict == {}:
+            return
         self.CurrentOp = "Loading entries "+str((self.pageNum-1)*self.global_config["displayedEntries"]+1)+" to "+str(self.pageNum*self.global_config["displayedEntries"])
         self.PBPercentage = 0
         self.PBChange()
@@ -468,6 +526,7 @@ class GUI(tk.Frame):
             self.fileMenu.entryconfig("Import", state=tk.NORMAL)
             self.fileMenu.entryconfig("Close", state=tk.DISABLED)
             self.fileMenu.entryconfig("Export", state=tk.DISABLED)
+            self.automationMenu.entryconfig("Bird-on-Nest sorter", state=tk.DISABLED)
             self.partsFrame.grid_forget()
             self.fileLabel.config(text = "No file selected")
             self.totEntriesLabel.config(text = "")
