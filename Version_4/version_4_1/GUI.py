@@ -44,6 +44,7 @@ class GUI(tk.Frame):
         self.fileDict = {}
         self.displayedEntryList = []
         self.displayedAllList = []
+        self.displayedHeadersList = []
         self.pageNum = 0
         self.PBPercentage = 0
         self.CurrentOp = "Idle"
@@ -231,12 +232,13 @@ class GUI(tk.Frame):
         self.sideFrame = tk.Frame(self.allFrame, background = "#D2D2D2")
         self.FileDescriptorWindow = tk.Canvas(self.sideFrame, height=100, width=98,highlightthickness=0)
         self.FileDescriptorWindow.pack_propagate(False)
-        self.IncorrectMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
+        self.HeaderMiniWindow = tk.Canvas(self.sideFrame, height=324, width=98,highlightthickness=0)
+        self.HeaderMiniWindow.pack_propagate(False)
         self.FileDescriptorWindow.grid(column=0, row=0, sticky=tk.NW, padx=2, pady=2)
-        self.IncorrectMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=2, pady=0)
+        self.HeaderMiniWindow.grid(column=0, row=1, sticky=tk.NW, padx=2, pady=0)
         self.sideFrame.grid(column=0, row=0, sticky=tk.NW,pady=1)
         
-        self.fileLabel = tk.Label(self.FileDescriptorWindow, text="No file selected", font="Verdana 7 bold")
+        self.fileLabel = tk.Label(self.FileDescriptorWindow, text="No file selected", font="Verdana 7 bold", bg="#FF0000")
         self.totEntriesLabel = tk.Label(self.FileDescriptorWindow, text="")
         self.totPartsLabel = tk.Label(self.FileDescriptorWindow, text="")
         self.fileLabel.pack(anchor=tk.NW, padx=5, pady=5)
@@ -327,13 +329,17 @@ class GUI(tk.Frame):
         fp = open("resources/global_config.json", "w")
         json.dump(self.global_config, fp)
         fp.close()
-        self.pageNum = 0
-        self.startDL()
-        self.loadNext()
-        
+        self.displayedHeadersList.append(tk.Label(self.HeaderMiniWindow, text="Headers currently\nin file:", font="Verdana 7 bold"))
+        self.displayedHeadersList[-1].pack(anchor=tk.NW)
+        for i in self.global_config["headers"]:
+            self.displayedHeadersList.append(tk.Label(self.HeaderMiniWindow, text=i, font="Verdana 6"))
+            self.displayedHeadersList[-1].pack(anchor=tk.NW)
         self.fileLabel.config(text=self.splitFileName(self.fileDict["details"]["fileName"]))
         self.totEntriesLabel.config(text=str(self.fileDict["details"]["totEntries"])+" entries")
         self.totPartsLabel.config(text=str(int(self.fileDict["details"]["totEntries"]/float(self.global_config["displayedEntries"]))+1)+" parts")
+        self.pageNum = 0
+        self.startDL()
+        self.loadNext()
         
         self.partsFrame.grid(row=1, sticky=tk.W)
         
@@ -531,6 +537,8 @@ class GUI(tk.Frame):
             self.fileLabel.config(text = "No file selected")
             self.totEntriesLabel.config(text = "")
             self.totPartsLabel.config(text = "")
+            for i in self.displayedHeadersList:
+                i.destroy()
             
     def onDestroy(self):
         if ImageEngine.shutoff == False:

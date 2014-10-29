@@ -25,6 +25,8 @@ class AskSave(tk.Frame):
             i.destroy()
         for i in self.guiObject.displayedAllList:
             i.destroy()
+        for i in self.guiObject.displayedHeadersList:
+            i.destroy()
         self.guiObject.fileDict = {}
         self.guiObject.modified = False
         self.guiObject.fileMenu.entryconfig("Save", state=tk.DISABLED)
@@ -33,6 +35,9 @@ class AskSave(tk.Frame):
         self.guiObject.fileMenu.entryconfig("Import", state=tk.NORMAL)
         self.guiObject.fileMenu.entryconfig("Close", state=tk.DISABLED)
         self.guiObject.partsFrame.grid_forget()
+        self.guiObject.fileLabel.config(text = "No file selected")
+        self.guiObject.totEntriesLabel.config(text = "")
+        self.guiObject.totPartsLabel.config(text = "")
         if self.mode == "destroy":
             self.guiObject.parent.destroy()
         else:
@@ -47,6 +52,8 @@ class AskSave(tk.Frame):
             i.destroy()
         for i in self.guiObject.displayedAllList:
             i.destroy()
+        for i in self.guiObject.displayedHeadersList:
+            i.destroy()
         self.guiObject.fileDict = {}
         self.guiObject.modified = False
         self.guiObject.fileMenu.entryconfig("Save", state=tk.DISABLED)
@@ -55,6 +62,9 @@ class AskSave(tk.Frame):
         self.guiObject.fileMenu.entryconfig("Import", state=tk.NORMAL)
         self.guiObject.fileMenu.entryconfig("Close", state=tk.DISABLED)
         self.guiObject.partsFrame.grid_forget()
+        self.guiObject.fileLabel.config(text = "No file selected")
+        self.guiObject.totEntriesLabel.config(text = "")
+        self.guiObject.totPartsLabel.config(text = "")
         if self.mode == "destroy":
             self.guiObject.parent.destroy()
         else:
