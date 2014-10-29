@@ -48,13 +48,13 @@ class GUI(tk.Frame):
         self.CurrentOp = "Idle"
         self.modified = False
         
-        ImageEngine.shutoff = False
+        ImageEngine.shutoff = True
         ImageEngine.wait = False
         
         tk.Frame.__init__(self, parent)
         self.parent = parent
         # This DOES NOT WORK. At all. No idea why. No errors or anything. It just ignores the line completely...
-        self.parent.wm_protocol("WM_CLOSE_WINDOW", self.onDestroy)
+        self.parent.wm_protocol("WM_DELETE_WINDOW", self.onDestroy)
         
         # Load global config settings
         try:
@@ -289,8 +289,9 @@ class GUI(tk.Frame):
 
     def fileSA(self):
         self.fileDict['details']['saveLocation']=functionBase.writeFile('saveAs', self.fileDict)
-        functionBase.writeFile('save', self.fileDict)
-        self.modified = False
+        if self.fileDict['details']['saveLocation'] != None:
+            functionBase.writeFile('save', self.fileDict)
+            self.modified = False
 
     def fileS(self):
         functionBase.writeFile('save', self.fileDict)
@@ -448,11 +449,12 @@ class GUI(tk.Frame):
         self.pageNumUpdate()
     
     def onClose(self):
-        ImageEngine.shutoff = True
-        while not ImageEngine.wait:
-            time.sleep(1)
+        if ImageEngine.shutoff == False:
+            ImageEngine.shutoff = True
+            while not ImageEngine.wait:
+                time.sleep(1)
         if self.modified:
-            AskSave(self)
+            AskSave(self, "close")
         else:
             for i in self.displayedAllList:
                 i.destroy()
@@ -472,11 +474,12 @@ class GUI(tk.Frame):
             self.totPartsLabel.config(text = "")
             
     def onDestroy(self):
-        ImageEngine.shutoff = True
-        while not ImageEngine.wait:
-            time.sleep(1)
+        if ImageEngine.shutoff == False:
+            ImageEngine.shutoff = True
+            while not ImageEngine.wait:
+                time.sleep(1)
         if self.modified:
-            AskSave(self)
+            AskSave(self, "destroy")
         else:
             for i in self.displayedAllList:
                 i.destroy()
@@ -484,4 +487,4 @@ class GUI(tk.Frame):
                 i.destroy()
             self.fileDict = {}
             self.modified = False
-        self.parent.destroy()
+            self.parent.destroy()

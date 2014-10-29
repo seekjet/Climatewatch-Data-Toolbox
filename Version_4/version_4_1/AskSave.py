@@ -1,8 +1,9 @@
 import Tkinter as tk
 
 class AskSave(tk.Frame):
-    def __init__(self, guiObject):    
+    def __init__(self, guiObject, mode):    
         self.guiObject = guiObject
+        self.mode = mode
         self.parent = tk.Toplevel()
         tk.Frame.__init__(self, self.parent)
         self.parent.title("Save changes?")
@@ -32,7 +33,10 @@ class AskSave(tk.Frame):
         self.guiObject.fileMenu.entryconfig("Import", state=tk.NORMAL)
         self.guiObject.fileMenu.entryconfig("Close", state=tk.DISABLED)
         self.guiObject.partsFrame.grid_forget()
-        self.parent.destroy()
+        if self.mode == "destroy":
+            self.guiObject.parent.destroy()
+        else:
+            self.parent.destroy()
         
     def cancel(self):
         self.parent.destroy()
@@ -51,4 +55,7 @@ class AskSave(tk.Frame):
         self.guiObject.fileMenu.entryconfig("Import", state=tk.NORMAL)
         self.guiObject.fileMenu.entryconfig("Close", state=tk.DISABLED)
         self.guiObject.partsFrame.grid_forget()
-        self.parent.destroy()
+        if self.mode == "destroy":
+            self.guiObject.parent.destroy()
+        else:
+            self.parent.destroy()
