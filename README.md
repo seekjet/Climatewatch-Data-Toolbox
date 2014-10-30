@@ -1,6 +1,5 @@
 Climatewatch-Data-Toolbox
 =========================
-dun fuk up plz
-Oh, and the default background is #D9D9D9
+A tool for Climatewatch volunteers/employees to verify submitted data more efficiently.
 
 	
