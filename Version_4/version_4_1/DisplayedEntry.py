@@ -43,9 +43,10 @@ class DisplayedEntry:
         self.flagRect = self.entryCanvas.create_rectangle(1,1,16,64, fill=self.flagcolor, outline="#D9D9D9")
         try:
             photo = Image.open(self.picturePath)
-        except IOError:
+            photo.resize((photo.size[0], photo.size[1])) # check for corruption due to opening mid-download
+        except:
             # It hasn't downloaded yet.
-            self.picturePath = "resources"+file_delimeter+"Downfag.png"
+            self.picturePath = "resources"+file_delimeter+"loading.png"
             photo = Image.open(self.picturePath)
         aspectRatio = float(photo.size[0])/float(photo.size[1])
         if aspectRatio < 96.0/64.0:

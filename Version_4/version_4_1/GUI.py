@@ -519,7 +519,7 @@ class GUI(tk.Frame):
     def onClose(self):
         if ImageEngine.shutoff == False:
             ImageEngine.shutoff = True
-            while not ImageEngine.wait:
+            while ImageEngine.wait:
                 time.sleep(1)
         if self.modified:
             AskSave(self, "close")
@@ -547,7 +547,7 @@ class GUI(tk.Frame):
     def onDestroy(self):
         if ImageEngine.shutoff == False:
             ImageEngine.shutoff = True
-            while not ImageEngine.wait:
+            while ImageEngine.wait:
                 time.sleep(1)
         if self.modified:
             AskSave(self, "destroy")
