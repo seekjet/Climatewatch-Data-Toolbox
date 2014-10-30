@@ -43,5 +43,6 @@ def Engine(guiObject):
                             j.picturePath = "resources"+file_delimeter+guiObject.fileDict["entries"][str(i)]["catalogueNumber"]
                             j.drawItems()
     
-    wait = True
+    wait = False
+    shutoff = True
     thread.exit()
