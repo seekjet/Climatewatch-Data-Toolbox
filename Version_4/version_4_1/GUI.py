@@ -271,8 +271,8 @@ class GUI(tk.Frame):
         self.modified = True
         total = 0
         for i in range(self.fileDict["details"]["totEntries"]):
-            if (self.fileDict["entries"][str(i)]["Behaviour"] in ["Bird on nest", "Bird on Eggs", "Bird on Chicks"]) and (self.fileDict["entries"][str(i)]["Nest present"] != "Yes"):
-                total += 0
+            if (self.fileDict["entries"][str(i)]["Behaviour"].lower() in ["bird on nest", "bird on eggs", "bird on chicks"]) and (self.fileDict["entries"][str(i)]["Nest present"] != "Yes"):
+                total += 1
                 self.fileDict["entries"][str(i)]["__isCorrect__"] = "no"
         tkMessageBox.showinfo("Bird-on-Nest sorter", "Completed, found "+str(total)+" contradictory entries.")
         self.reload()
